@@ -1,0 +1,239 @@
+---
+title: "SpatialData_and_Mapping"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{R - Install Packages}
+
+#does this work?
+packages<-c("raster","rgdal","sp","rgeos","spatial","GISTools","maptools","spatstat","randomForest","sf","stats","tidyverse","magrittr","lintr","viridis","cowplot","rmarkdown")
+
+package.check <- lapply(packages,FUN = function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, dependencies = TRUE)
+      library(x, character.only = TRUE)}})
+
+# All good
+```
+
+# Working off of Chloe's desktop GIS workspace
+```{r - Set Working Directory}
+# Chloe's desktop
+setwd("C:/Users/Invasion Lab/Desktop/SpatialDataandMapping")
+
+#Sarah's dektop
+setwd("/Users/swaybright/Desktop/")
+
+```
+
+# Load Vector Data
+```{r - Load Vector Data}
+
+# Read in dataset of leafy spurge presence points in Fremont Co, WY
+#Chloe read in
+SpurgeFull <- readOGR(dsn = "C:/Users/Invasion Lab/Desktop/SpatialDataandMapping", layer = "SpurgeFull")
+
+#Sarah read in 
+SpurgeFull <- readOGR(dsn = "/Users/swaybright/Desktop/SpatialDataandMapping", layer = "SpurgeFull")
+bbox(SpurgeFull)
+
+# Plot dataset
+plot(SpurgeFull)
+
+# Not that informative, add some spatial context with Fremont Co border
+FremontCo <- readOGR(dsn = "/Users/swaybright/Desktop/SpatialDataandMapping", layer = "FremontCo")
+StudyExtent <- readOGR(dsn = "/Users/swaybright/Desktop/SpatialDataandMapping", layer = "FremontBuff1000m")
+bbox(FremontCo)
+bbox(StudyExtent)
+
+# Check coordinate system and projection, otherwise these will not align
+proj4string(SpurgeFull)
+st_crs(SpurgeFull)
+# "+proj=tmerc +lat_0=40.5 +lon_0=-108.75 +k=0.9999375 +x_0=600000 +y_0=0 +datum=NAD83 +units=us-ft +no_defs"
+# That's UTM NAD1983, more specifically, this uses the Wyoming State Plane
+# This would probably be appropriate for the scale of our dataset, but will result in a stretched out map
+# Could find a better option... Let's roll unprojected for now, just lat long
+SpurgeFull <- spTransform(SpurgeFull, CRS("+proj=longlat +datum=WGS84 +no_defs"))
+plot(SpurgeFull)
+# Check the county layer
+proj4string(FremontCo)
+proj4string(StudyExtent)
+# WGS84, no projection... Keep that for now
+
+bbox(StudyExtent)
+Bbox <- bbox
+
+# Have to fortify to plot with ggplot
+FremontCoF <- fortify(FremontCo)
+StudyExtentF <- fortify(FremontCo)
+SpurgeFullF <- fortify(SpurgeFull)
+
+# Plot them together, finally
+BaseMap <- ggplot() +
+  geom_polygon(data = FremontCoF, aes(x=long, y=lat)) +
+  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), fill = "NA", color ="yellow")+
+  theme_minimal()+
+  labs(x="",y="")
+BaseMap
+
+# Import and adjust all other vector data
+
+# Read in county roads
+FremontCoRoad <- readOGR(dsn = "/Users/swaybright/Desktop/SpatialDataandMapping", layer = "FremontCoRoad")
+# Check projection
+st_crs(FremontCoRoad)
+proj4string(FremontCoRoad)
+# Fortify
+FremontCoRoadF <- fortify(FremontCoRoad)
+# Plot dataset
+ggplot() +
+  geom_polygon(data = FremontCoF, aes(x=long, y=lat)) +
+  geom_line(data = FremontCoRoadF, aes(x=long, y=lat, group = group), color = "white" )
+# This  dataset is HUGE, cut it down to just the main roads
+
+# Read in main roads
+FremontMRoads <- readOGR(dsn = "/Users/swaybright/Desktop/SpatialDataandMapping", layer = "FremontMainRoads")
+# Check projection
+st_crs(FremontMRoads)
+proj4string(FremontMRoads)
+# Fortify
+FremontMRoadsF <- fortify(FremontMRoads)
+# Plot dataset
+ggplot() +
+  geom_polygon(data = FremontCoF, aes(x=long, y=lat)) +
+  geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "white")+
+  theme_minimal()+
+  labs(x="", y="")+
+  theme(panel.grid = element_blank(), axis.text = element_blank())
+
+# Read in waterways
+FremontWater <- readOGR(dsn = "/Users/swaybright/Desktop/SpatialDataandMapping", layer = "WaterwaysFremont")
+# Check projection
+proj4string(FremontWater)
+# Fortify
+FremontWaterF <- fortify(FremontWater)
+bbox(FremontWater)
+
+# Plot dataset
+ggplot() +
+  geom_polygon(data = FremontCoF, aes(x=long, y=lat)) +
+  geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), fill = "blue", color = "blue" )+    geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "white" ) +
+  theme_minimal()+
+  labs(x="", y="")+
+  theme(panel.grid = element_blank(), axis.text = element_blank())
+#does this look right or do we need to mask this somehow??
+
+# Read in public land management areas
+FremontAgencies <- readOGR(dsn = "/Users/swaybright/Desktop/SpatialDataandMapping", layer = "FremontAgencies")
+# Check projection
+proj4string(FremontAgencies)
+# Fortify
+FremontAgenciesF <- fortify(FremontAgencies)
+# Plot dataset
+# ggplot() +
+  # geom_polygon(data = FremontCoF, aes(x=long, y=lat)) +
+  # geom_polygon(data = FremontAgenciesF, aes(x=long, y=lat, fill = id, group = group), color = "black") +
+  # geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), fill = "NA", color = "white" ) +
+  # geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), fill = "NA", color = "blue" )
+plot(FremontAgencies)
+
+```
+
+# Load Raster Data
+```{r Import Raster Data}
+# For this project, we have three continuous topographic rasters and one thematic landcover raster
+
+# Import elevation
+Elevation <- raster("/Users/swaybright/Desktop/SpatialDataandMapping/elev_output.tif")
+st_crs(Elevation)
+plot(Elevation)
+
+# Import aspect
+Aspect <- raster("/Users/swaybright/Desktop/SpatialDataandMapping/aspect_output.tif")
+st_crs(Aspect)
+plot(Aspect)
+
+# Import slope
+Slope <- raster("/Users/swaybright/Desktop/SpatialDataandMapping/slope_output.tif")
+st_crs(Slope)
+plot(Slope)
+
+# Import GAP landcover data
+GAPCover <- raster("/Users/swaybright/Desktop/SpatialDataandMapping/GAP_output.tif")
+st_crs(GAPCover)
+plot(GAPCover)
+
+# Alright, all data is in!
+```
+
+# plot Raster Data w/ fremont maps
+```{r}
+map.p <- rasterToPoints(Elevation)
+#Make the points a dataframe for ggplot
+df <- data.frame(map.p)
+#Make appropriate column headings
+colnames(df)<-c("Longitude", "Latitude", "MAP")
+
+#plot elevation
+  ggplot(df, aes(x=Latitude, y=Longitude)) +
+  geom_raster(aes(fill=MAP))+
+  theme_minimal()+
+  labs(x="", y="")+
+  theme(panel.grid = element_blank(), axis.text = element_blank())+
+  #maybe?
+  coord_equal()+
+  scale_fill_gradient(high="yellow", low="darkgreen")
+
+#aspect
+map.p <- rasterToPoints(Aspect)
+
+#Make the points a dataframe for ggplot
+df <- data.frame(map.p)
+#Make appropriate column headings
+colnames(df)<-c("Longitude", "Latitude", "MAP")
+
+#plot aspect
+  ggplot(df, aes(x=Latitude, y=Longitude)) +
+  geom_raster(aes(fill=MAP))+
+  theme_minimal()+
+  labs(x="", y="")+
+  theme(panel.grid = element_blank(), axis.text = element_blank())+
+  #maybe?
+  coord_equal()+
+  scale_fill_gradient(high="yellow", low="darkgreen")
+
+  #slope
+  map.p <- rasterToPoints(Slope)
+
+#Make the points a dataframe for ggplot
+df <- data.frame(map.p)
+#Make appropriate column headings
+colnames(df)<-c("Longitude", "Latitude", "MAP")
+
+#plot slope
+  ggplot(df, aes(x=Latitude, y=Longitude)) +
+  geom_raster(aes(fill=MAP))+
+  theme_minimal()+
+  labs(x="", y="")+
+  theme(panel.grid = element_blank(), axis.text = element_blank())+
+  #maybe?
+  coord_equal()+
+  scale_fill_gradient(high="yellow", low="darkgreen")
+
+#GAP landcover data
+map.p <- rasterToPoints(GAPCover)
+df <- data.frame(map.p)
+#Make appropriate column headings
+colnames(df)<-c("Longitude", "Latitude", "MAP")
+
+#plot slope
+  ggplot(df, aes(x=Latitude, y=Longitude)) +
+  geom_raster(aes(fill=MAP))+
+  theme_minimal()+
+  labs(x="", y="")+
+  theme(panel.grid = element_blank(), axis.text = element_blank())+
+  #maybe?
+  coord_equal()+
+  scale_fill_gradient(high="yellow", low="darkgreen")
