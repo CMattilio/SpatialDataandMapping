@@ -183,7 +183,6 @@ colnames(df)<-c("Longitude", "Latitude", "MAP")
   theme_minimal()+
   labs(x="", y="")+
   theme(panel.grid = element_blank(), axis.text = element_blank())+
-  #maybe?
   coord_equal()+
   scale_fill_gradient(high="yellow", low="darkgreen")
 
@@ -228,13 +227,12 @@ map.p <- rasterToPoints(GAPCover)
 df <- data.frame(map.p)
 #Make appropriate column headings
 colnames(df)<-c("Longitude", "Latitude", "MAP")
+plot(GAPCover[[1]])
 
 #plot slope
-  ggplot(df, aes(x=Latitude, y=Longitude)) +
-  geom_raster(aes(fill=MAP))+
+  ggplot(df, aes(y=Latitude, x=Longitude)) +
+  geom_raster(aes(fill=MAP[[1]]))+
   theme_minimal()+
   labs(x="", y="")+
   theme(panel.grid = element_blank(), axis.text = element_blank())+
-  #maybe?
-  coord_equal()+
   scale_fill_gradient(high="yellow", low="darkgreen")
