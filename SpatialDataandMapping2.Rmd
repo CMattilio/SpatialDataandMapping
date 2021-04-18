@@ -6,7 +6,7 @@ editor_options:
 ---
 
 ```{R - Install Packages}
-
+#checking push/pull
 #does this work?
 packages<-c("raster","rgdal","sp","rgeos","spatial","GISTools","maptools","spatstat","randomForest","sf","stats","tidyverse","magrittr","lintr","viridis","cowplot","rmarkdown")
 
