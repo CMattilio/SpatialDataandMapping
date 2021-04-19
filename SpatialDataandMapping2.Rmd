@@ -119,7 +119,7 @@ FremontMRoadsF<-fortify(FremontMRoads)
 ggplot()+
   geom_polygon(data=study_areaF, aes(x=long, y=lat), color="red", fill="grey")+
   geom_polygon(data=FremontWaterF, aes(x=long, y=lat, group=group), color="blue")+    
-  geom_line(data=FremontMRoads, aes(x=long, y=lat, group=group), color="black")+ #still outside of bounds 
+  geom_line(data=FremontMRoadsF, aes(x=long, y=lat, group=group), color="black")+ #still outside of bounds 
   geom_polygon(data=SpurgeFullF, aes(x=long, y=lat, group=group),color="chartreuse")+  
   theme_minimal()+
   labs(x="", y="")+
@@ -170,13 +170,23 @@ ggplot(df, aes(y=Latitude, x=Longitude)) +
   scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
   geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "blue")+
   geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
-  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="yellow")
+  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
 #we need a legend... 
 
 #or w/ all of Fremont Co!
 GAPCover <- raster("GAP_output.tif")
-masked<-mask(GAPCover,FremontCo)
-GAPCover<-masked
+SpurgeFull <- readOGR(dsn = ".", layer = "SpurgeFull")
+FremontMRoads <- readOGR(dsn = ".", layer = "FremontMainRoads")
+FremontWater <- readOGR(dsn = ".", layer = "WaterwaysFremont")
+FremontCo <- readOGR(dsn = ".", layer = "FremontCo")
+
+proj <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
+SpurgeFull <- spTransform(SpurgeFull, CRS(proj))
+FremontMRoads <- spTransform(FremontMRoads, CRS(proj))
+FremontWater <- spTransform(FremontWater, CRS(proj))
+FremontCo <- spTransform(FremontCo, CRS(proj))
+
+GAPCover<-mask(GAPCover,FremontCo)
 
 map.p <- rasterToPoints(GAPCover)
 df <- data.frame(map.p)
@@ -184,11 +194,8 @@ df <- data.frame(map.p)
 colnames(df)<-c("Longitude", "Latitude", "MAP")
 df<-fortify(df)
 
-#all un-cropped
-SpurgeFull <- readOGR(dsn = ".", layer = "SpurgeFull")
-FremontMRoads <- readOGR(dsn = ".", layer = "FremontMainRoads")
-FremontWater <- readOGR(dsn = ".", layer = "WaterwaysFremont")
-FremontCo <- readOGR(dsn = ".", layer = "FremontCo")
+#crop to Fremont Co
+FremontMRoads<-crop(FremontMRoads,FremontCo)
 
 #fortify for ggplot
 SpurgeFullF <- fortify(SpurgeFull)
@@ -198,21 +205,21 @@ FremontMRoadsF<-fortify(FremontMRoads)
 FremontWater<-crop(FremontWater,FremontCo)
 FremontWaterF <- fortify(FremontWater)
 
+
 #plot all together!
 ggplot(df, aes(y=Latitude, x=Longitude)) +
   geom_raster(aes(fill=MAP))+
   theme_minimal()+
   theme(panel.grid = element_blank(), axis.text = element_blank())+
-  labs(x="", y="")+
+  labs(x="", y="", fill="GAPCover (?)")+
   scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
   geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "blue")+
   geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
-  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="yellow")
+  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
 
 # You can do this for Elevation too, if you're interested, but 1st mask it first to Fremont Co!
 Elevation <- raster("elev_output.tif")
-masked<-mask(Elevation,FremontCo)
-Elevation<-masked
+Elevation<-mask(Elevation,FremontCo)
 
 #raster to points for ggplot!
 map.p <- rasterToPoints(Elevation)
@@ -226,7 +233,7 @@ ggplot(elev.df, aes(y=Latitude, x=Longitude)) +
   geom_raster(aes(fill=MAP))+
   theme_minimal()+
   theme(panel.grid = element_blank(), axis.text = element_blank())+
-  labs(x="", y="")+
+  labs(x="", y="", fill="Elevation (m)")+
   scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
   geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "blue")+
   geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
