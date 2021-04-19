@@ -106,6 +106,7 @@ plot(study_area, add = T, border = "red")
 plot(FremontWater, add = T, border = "blue")
 plot(FremontMRoads, add = T, border = "grey")
 # what has changed in the data? 
+
 # hint:look at length of some features or total length in 
 
 # take a different look in ggplot
