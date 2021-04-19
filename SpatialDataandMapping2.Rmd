@@ -12,7 +12,7 @@ editor_options:
 ---
 
 ```{R - Install Packages}
-packages<-c("sf", "raster", "rgdal", "rgeos", "sp", "tidyverse", "rmarkdown")
+packages<-c("sf", "raster", "rgdal", "rgeos", "sp", "tidyverse", "rmarkdown", "RColorBrewer")
 
 package.check <- lapply(packages,FUN = function(x) {
     if (!require(x, character.only = TRUE)) {
@@ -113,7 +113,6 @@ plot(FremontMRoads, add = T, border = "grey")
 
 # take a different look in ggplot
 # Have to fortify to plot with ggplot
-FremontMRoadsF <- fortify(FremontMRoads)
 study_areaF <- fortify(study_area)
 SpurgeFullF <- fortify(SpurgeFull)
 FremontWaterF <- fortify(FremontWater)
@@ -122,14 +121,14 @@ FremontCoF <- fortify(FremontCo)
 
 # Plot spurge and fremont country to continue to get oriented
 ggplot() +
-  geom_polygon(data = FremontCoF, aes(x=long, y=lat), fill = NA, color = "red") +
-  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), fill = "NA", color ="green")+
+  geom_polygon(data = FremontCoF, aes(x=long, y=lat), color = "red") +
+  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group),color ="green")+
   theme_minimal()+
   labs(x="",y="")
 
 # Plot dataset with new clipped extent
 ggplot() +
-  geom_polygon(data = study_areaF, aes(x=long, y=lat), fill = NA, color = "darkred") +
+  geom_polygon(data = study_areaF, aes(x=long, y=lat), color = "darkred") +
   geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), fill = "blue", color = "blue" ) +    
     geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), fill = "orange", color = "orange" ) +    
   geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black" ) +
@@ -147,25 +146,13 @@ Raster data is made up of a grid of pixels filled with values. These can be cont
 Elevation <- raster("elev_output.tif")
 plot(Elevation)
 
-# Import aspect
-Aspect <- raster("aspect_output.tif")
-plot(Aspect)
-
-# Import slope
-Slope <- raster("slope_output.tif")
-plot(Slope)
-
 # Import GAP landcover data
 GAPCover <- raster("GAP_output.tif")
 plot(GAPCover)
-
 # Alright, all data is in!
 
 # What to we need to do to make sure things will line up?
-proj
 proj4string(Elevation)
-proj4string(Aspect)
-proj4string(Slope)
 proj4string(GAPCover)
 # all looks great!
 
@@ -173,83 +160,86 @@ proj4string(GAPCover)
 
 # plot Raster Data w/ fremont maps
 ```{r}
-# clip the rasters to start since they will plot MUCH sloper than the lines or polygons.
-
+# clip the rasters to start since they will plot MUCH slower than the lines or polygons.
 Elevation <- crop(Elevation, study_area)
-Aspect <- crop(Aspect, study_area)
-Slope <- crop(Slope, study_area)
 GAPCover <- crop(GAPCover, study_area)
 
-map.p <- rasterToPoints(Elevation)
-
-#Make the points a dataframe for ggplot
-df <- data.frame(map.p)
-
-#Make appropriate column headings
-colnames(df)<-c("Longitude", "Latitude", "MAP")
-
-#plot elevation
-  ggplot(df, aes(x=Latitude, y=Longitude)) +
-  geom_raster(aes(fill=MAP))+
-  theme_minimal()+
-  labs(x="", y="")+
-  theme(panel.grid = element_blank(), axis.text = element_blank())+
-  coord_equal()+
-  scale_fill_gradient(high="yellow", low="darkgreen")
-
-#aspect
-map.p <- rasterToPoints(Aspect)
-
-#Make the points a dataframe for ggplot
-df <- data.frame(map.p)
-
-#Make appropriate column headings
-colnames(df)<-c("Longitude", "Latitude", "MAP")
-
-#plot aspect
-  ggplot(df, aes(x=Latitude, y=Longitude)) +
-  geom_raster(aes(fill=MAP))+
-  theme_minimal()+
-  labs(x="", y="")+
-  theme(panel.grid = element_blank(), axis.text = element_blank())+
-  #maybe?
-  coord_equal()+
-  scale_fill_gradient(high="yellow", low="darkgreen")
-  
-#slope
-map.p <- rasterToPoints(Slope)
-
-#Make the points a dataframe for ggplot
-df <- data.frame(map.p)
-
-#Make appropriate column headings
-colnames(df)<-c("Longitude", "Latitude", "MAP")
-
-#plot slope
-  ggplot(df, aes(x=Latitude, y=Longitude)) +
-  geom_raster(aes(fill=MAP))+
-  theme_minimal()+
-  labs(x="", y="")+
-  theme(panel.grid = element_blank(), axis.text = element_blank())+
-  #maybe?
-  coord_equal()+
-  scale_fill_gradient(high="yellow", low="darkgreen")
-
-#GAP landcover data
+#GAPCover
+#We  need to convert GAP landcover data from a raster to points to use in ggplot!
 map.p <- rasterToPoints(GAPCover)
 df <- data.frame(map.p)
-
 #Make appropriate column headings
 colnames(df)<-c("Longitude", "Latitude", "MAP")
-plot(GAPCover[[1]])
+df<-fortify(df)
 
-#plot slope
-  ggplot(df, aes(y=Latitude, x=Longitude)) +
-  geom_raster(aes(fill=MAP[[1]]))+
+#GAPCover map - you'll have to give this a minute or two to plot!
+ggplot(df, aes(y=Latitude, x=Longitude)) +
+  geom_raster(aes(fill=MAP))+
   theme_minimal()+
-  labs(x="", y="")+
   theme(panel.grid = element_blank(), axis.text = element_blank())+
-  scale_fill_gradient(high="yellow", low="darkgreen")
-  
-  
+  labs(x="", y="")+
+  scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
+  geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "blue")+
+  geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
+  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="yellow")
+#we need a legend... 
+
+#or w/ all of Fremont Co!
+GAPCover <- raster("GAP_output.tif")
+masked<-mask(GAPCover,FremontCo)
+GAPCover<-masked
+
+map.p <- rasterToPoints(GAPCover)
+df <- data.frame(map.p)
+#Make appropriate column headings
+colnames(df)<-c("Longitude", "Latitude", "MAP")
+df<-fortify(df)
+
+#all un-cropped
+SpurgeFull <- readOGR(dsn = ".", layer = "SpurgeFull")
+FremontMRoads <- readOGR(dsn = ".", layer = "FremontMainRoads")
+FremontWater <- readOGR(dsn = ".", layer = "WaterwaysFremont")
+FremontCo <- readOGR(dsn = ".", layer = "FremontCo")
+
+#fortify for ggplot
+SpurgeFullF <- fortify(SpurgeFull)
+
+#crop water to just Fremont Co
+FremontWater<-crop(FremontWater,FremontCo)
+FremontWaterF <- fortify(FremontWater)
+
+#plot all together!
+ggplot(df, aes(y=Latitude, x=Longitude)) +
+  geom_raster(aes(fill=MAP))+
+  theme_minimal()+
+  theme(panel.grid = element_blank(), axis.text = element_blank())+
+  labs(x="", y="")+
+  scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
+  geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "blue")+
+  geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
+  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="yellow")
+
+# You can do this for Elevation too, if you're interested, but 1st mask it first to Fremont Co!
+Elevation <- raster("elev_output.tif")
+masked<-mask(Elevation,FremontCo)
+Elevation<-masked
+
+#raster to points for ggplot!
+map.p <- rasterToPoints(Elevation)
+elev.df <- data.frame(map.p)
+#Make appropriate column headings
+colnames(df)<-c("Longitude", "Latitude", "MAP")
+elev.df<-fortify(df)
+
+#Elevation map - you'll have to give this a minute or two to plot!
+ggplot(elev.df, aes(y=Latitude, x=Longitude)) +
+  geom_raster(aes(fill=MAP))+
+  theme_minimal()+
+  theme(panel.grid = element_blank(), axis.text = element_blank())+
+  labs(x="", y="")+
+  scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
+  geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "blue")+
+  geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
+  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
+
 ```
