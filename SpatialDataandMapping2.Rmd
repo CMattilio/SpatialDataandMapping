@@ -1,7 +1,10 @@
 ---
 title: "SpatialData_and_Mapping"
-output: html_document
-editor_options: 
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+editor_options:
   chunk_output_type: console
 ---
 ---
@@ -11,8 +14,8 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{R - Install Packages}
-packages<-c("sf", "raster", "rgdal", "rgeos", "sp", "tidyverse", "rmarkdown", "RColorBrewer")
+```{R - Install Packages, message=F}
+packages<-c("sf", "raster", "rgdal", "rgeos", "sp", "tidyverse", "rmarkdown", "RColorBrewer","knitr")
 
 package.check <- lapply(packages,FUN = function(x) {
     if (!require(x, character.only = TRUE)) {
@@ -24,44 +27,37 @@ rm(packages, package.check)
 ```
 
 # Working off of Chloe's desktop GIS workspace
-```{r - Set Working Directory}
+```{r - Set Working Directory,message=F}
 # Make sure working directory is automatically set to your local github folder
 getwd()
 
 #S
 setwd("/Users/swaybright/Desktop/SpatialDataandMapping2/")
-
 ```
 Vector data consists of points, lines, and/or polygons with spatial coordinates
 # Load Vector Data
-```{r - Load Vector Data}
+```{r - Load Vector Data,message=F}
 #### Bring in all data
-# Read in dataset of leafy spurge presence points in Fremont Co, WY
-
+# Read in data set of leafy spurge presence points in Fremont Co, WY
 SpurgeFull <- readOGR(dsn = ".", layer = "SpurgeFull")
 study_area <- readOGR(dsn = ".", layer = "StudyArea")
 FremontMRoads <- readOGR(dsn = ".", layer = "FremontMainRoads")
 FremontWater <- readOGR(dsn = ".", layer = "WaterwaysFremont")
 FremontCo <- readOGR(dsn = ".", layer = "FremontCo")
-head(SpurgeFull)
-head(study_area)
-head(FremontMRoads)
-head(FremontWater)
-head(FremontCo)
 
+#make sure data looks clean
 table(is.na(SpurgeFull$Latitude))# must be FALSE here! No TRUES. 
 table(is.na(SpurgeFull$Longitude))# must be FALSE here! No TRUES. 
+```
 
-# Plot dataset. May take a bit
-plot(SpurgeFull)
-# Not that informative, add some spatial context with Fremont Co border and a plot again
+```{r - Projections,message=F}
 
 # First, check coordinate system and projection, otherwise these will not align
-proj4string(SpurgeFull)
-proj4string(study_area)
-proj4string(FremontMRoads)
-proj4string(FremontWater)
-proj4string(FremontCo)
+crs(SpurgeFull)
+crs(study_area)
+crs(FremontMRoads)
+crs(FremontWater)
+crs(FremontCo)
 # need to make these uniform
 
 # what is the projection that your data are in?  You'll need to figure this out and specify below
@@ -73,44 +69,43 @@ FremontWater <- spTransform(FremontWater, CRS(proj))
 FremontCo <- spTransform(FremontCo, CRS(proj))
 
 # make sure all projections line up
-proj4string(SpurgeFull)
-proj4string(study_area)
-proj4string(FremontMRoads)
-proj4string(FremontWater)
-proj4string(FremontCo)
+crs(SpurgeFull)
+crs(study_area)
+crs(FremontMRoads)
+crs(FremontWater)
+crs(FremontCo)
 # perfect!
+```
+
+It is best practice to plot the data as you go. In this case it takes a long time.
+#Skip plotting data
+```{r - Plot data - just kidding!,message=F}
+
+# Plot data set
+  # plot(SpurgeFull)
+# Not that informative, add some spatial context with Fremont Co border and a plot again
+
+#help
+#knitr::include_graphics("plot1.jpg")
 
 # Plot datasets to make sure they line up. May take a bit
-plot(SpurgeFull)
-plot(FremontCo, add = T, border = "red")
-plot(FremontWater, add = T, border = "blue")
-plot(FremontMRoads, add = T, border = "grey")
+  # plot(SpurgeFull)
+  # plot(FremontCo, add = T, border = "red")
+  # plot(FremontWater, add = T, border = "blue")
+  # plot(FremontMRoads, add = T, border = "grey")
 
 # great, now let's zoom in a bit to help with processing time
+```
+
+```{r - clip data to smaller extent and plot in ggplot,message=F}
 
 # First lets clip the data to only look at Lander/Riverton area
-FremontMRoads <- FremontMRoads[study_area,]
 SpurgeFull <- SpurgeFull[study_area,]
-FremontWater <- FremontWater[study_area,]
+FremontWater <- crop(study_area,FremontWater)
+FremontMRoads<-FremontMRoads[study_area,]
 
-# Check to make sure it worked
-plot(SpurgeFull)
-plot(study_area, add = T, border = "red")
-plot(FremontWater, add = T, border = "blue")
-plot(FremontMRoads, add = T, border = "grey")
-# why do the roads and rivers still extend outside the study area polygon?
-
-# Lets to a little cleaner version of an intersection
-FremontWater <- gIntersection(FremontWater, study_area)
-FremontMRoads <- gIntersection(FremontMRoads, study_area)
-
-plot(SpurgeFull)
-plot(study_area, add = T, border = "red")
-plot(FremontWater, add = T, border = "blue")
-plot(FremontMRoads, add = T, border = "grey")
-# what has changed in the data? 
-
-# hint:look at length of some features or total length in 
+#clean - this still doesn't work for me
+#FremontMRoads<-gIntersection(study_area,FremontMRoads)
 
 # take a different look in ggplot
 # Have to fortify to plot with ggplot
@@ -118,30 +113,23 @@ study_areaF <- fortify(study_area)
 SpurgeFullF <- fortify(SpurgeFull)
 FremontWaterF <- fortify(FremontWater)
 FremontCoF <- fortify(FremontCo)
+FremontMRoadsF<-fortify(FremontMRoads) 
 
-
-# Plot spurge and fremont country to continue to get oriented
-ggplot() +
-  geom_polygon(data = FremontCoF, aes(x=long, y=lat), color = "red") +
-  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group),color ="green")+
-  theme_minimal()+
-  labs(x="",y="")
-
-# Plot dataset with new clipped extent
-ggplot() +
-  geom_polygon(data = study_areaF, aes(x=long, y=lat), color = "darkred") +
-  geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), fill = "blue", color = "blue" ) +    
-    geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), fill = "orange", color = "orange" ) +    
-  geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black" ) +
+# Plot data set with new clipped extent
+ggplot()+
+  geom_polygon(data=study_areaF, aes(x=long, y=lat), color="red", fill="grey")+
+  geom_polygon(data=FremontWaterF, aes(x=long, y=lat, group=group), color="blue")+    
+  geom_line(data=FremontMRoadsF, aes(x=long, y=lat, group=group), color="black")+ #still outside of bounds 
+  geom_polygon(data=SpurgeFullF, aes(x=long, y=lat, group=group),color="chartreuse")+  
   theme_minimal()+
   labs(x="", y="")+
-  theme(panel.grid = element_blank(), axis.text = element_blank())
+  theme(panel.grid=element_blank(), axis.text=element_blank())
 
 ```
 
 Raster data is made up of a grid of pixels filled with values. These can be continuous variables like elevation, thematic values like landcover, or reflectance values like remote sensing imagery. 
 # Load Raster Data
-```{r Import Raster Data}
+```{r Import Raster Data,message=F}
 # For this project, we have three continuous topographic rasters and one thematic landcover raster
 # Import elevation
 Elevation <- raster("elev_output.tif")
@@ -160,7 +148,7 @@ proj4string(GAPCover)
 ```
 
 # plot Raster Data w/ fremont maps
-```{r}
+```{r Plot all data into one lovely map,message=F}
 # clip the rasters to start since they will plot MUCH slower than the lines or polygons.
 Elevation <- crop(Elevation, study_area)
 GAPCover <- crop(GAPCover, study_area)
@@ -182,13 +170,23 @@ ggplot(df, aes(y=Latitude, x=Longitude)) +
   scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
   geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "blue")+
   geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
-  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="yellow")
+  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
 #we need a legend... 
 
 #or w/ all of Fremont Co!
 GAPCover <- raster("GAP_output.tif")
-masked<-mask(GAPCover,FremontCo)
-GAPCover<-masked
+SpurgeFull <- readOGR(dsn = ".", layer = "SpurgeFull")
+FremontMRoads <- readOGR(dsn = ".", layer = "FremontMainRoads")
+FremontWater <- readOGR(dsn = ".", layer = "WaterwaysFremont")
+FremontCo <- readOGR(dsn = ".", layer = "FremontCo")
+
+proj <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
+SpurgeFull <- spTransform(SpurgeFull, CRS(proj))
+FremontMRoads <- spTransform(FremontMRoads, CRS(proj))
+FremontWater <- spTransform(FremontWater, CRS(proj))
+FremontCo <- spTransform(FremontCo, CRS(proj))
+
+GAPCover<-mask(GAPCover,FremontCo)
 
 map.p <- rasterToPoints(GAPCover)
 df <- data.frame(map.p)
@@ -196,34 +194,32 @@ df <- data.frame(map.p)
 colnames(df)<-c("Longitude", "Latitude", "MAP")
 df<-fortify(df)
 
-#all un-cropped
-SpurgeFull <- readOGR(dsn = ".", layer = "SpurgeFull")
-FremontMRoads <- readOGR(dsn = ".", layer = "FremontMainRoads")
-FremontWater <- readOGR(dsn = ".", layer = "WaterwaysFremont")
-FremontCo <- readOGR(dsn = ".", layer = "FremontCo")
+#crop to Fremont Co
+FremontMRoads<-crop(FremontMRoads,FremontCo)
 
 #fortify for ggplot
 SpurgeFullF <- fortify(SpurgeFull)
+FremontMRoadsF<-fortify(FremontMRoads)
 
 #crop water to just Fremont Co
 FremontWater<-crop(FremontWater,FremontCo)
 FremontWaterF <- fortify(FremontWater)
+
 
 #plot all together!
 ggplot(df, aes(y=Latitude, x=Longitude)) +
   geom_raster(aes(fill=MAP))+
   theme_minimal()+
   theme(panel.grid = element_blank(), axis.text = element_blank())+
-  labs(x="", y="")+
+  labs(x="", y="", fill="GAPCover (?)")+
   scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
   geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "blue")+
   geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
-  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="yellow")
+  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
 
 # You can do this for Elevation too, if you're interested, but 1st mask it first to Fremont Co!
 Elevation <- raster("elev_output.tif")
-masked<-mask(Elevation,FremontCo)
-Elevation<-masked
+Elevation<-mask(Elevation,FremontCo)
 
 #raster to points for ggplot!
 map.p <- rasterToPoints(Elevation)
@@ -237,12 +233,13 @@ ggplot(elev.df, aes(y=Latitude, x=Longitude)) +
   geom_raster(aes(fill=MAP))+
   theme_minimal()+
   theme(panel.grid = element_blank(), axis.text = element_blank())+
-  labs(x="", y="")+
+  labs(x="", y="", fill="Elevation (m)")+
   scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
   geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "blue")+
   geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
   geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
 
+<<<<<<< HEAD
 # The coordinates for Lander, the Fremont County seat, are 42.8330° N, 108.7307° W
 # Add and assign a point to represent that
 
@@ -250,4 +247,6 @@ ggplot(elev.df, aes(y=Latitude, x=Longitude)) +
 
 #hello - lets see.
 
+=======
+>>>>>>> 2ba78995e13d8a8a54afd4fa63f90d51f94ef2c7
 ```
