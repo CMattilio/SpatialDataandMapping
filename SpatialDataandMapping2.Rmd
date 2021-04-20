@@ -205,7 +205,6 @@ FremontMRoadsF<-fortify(FremontMRoads)
 FremontWater<-crop(FremontWater,FremontCo)
 FremontWaterF <- fortify(FremontWater)
 
-
 #plot all together!
 ggplot(df, aes(y=Latitude, x=Longitude)) +
   geom_raster(aes(fill=MAP))+
@@ -216,6 +215,10 @@ ggplot(df, aes(y=Latitude, x=Longitude)) +
   geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "blue")+
   geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
   geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
+```
+
+Elevation map - all Fremont Co
+```{r Plot all data into one lovely map w/ Elevation,message=F}
 
 # You can do this for Elevation too, if you're interested, but 1st mask it first to Fremont Co!
 Elevation <- raster("elev_output.tif")
@@ -238,5 +241,4 @@ ggplot(elev.df, aes(y=Latitude, x=Longitude)) +
   geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "blue")+
   geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
   geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
-
 ```
