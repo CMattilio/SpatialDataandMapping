@@ -239,14 +239,4 @@ ggplot(elev.df, aes(y=Latitude, x=Longitude)) +
   geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
   geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
 
-<<<<<<< HEAD
-# The coordinates for Lander, the Fremont County seat, are 42.8330° N, 108.7307° W
-# Add and assign a point to represent that
-
-
-
-#hello - lets see.
-
-=======
->>>>>>> 2ba78995e13d8a8a54afd4fa63f90d51f94ef2c7
 ```
