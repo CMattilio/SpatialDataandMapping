@@ -23,7 +23,7 @@ package.check <- lapply(packages,FUN = function(x) {
 rm(packages)
 ```
 
-# Working off of Chloe's desktop GIS workspace
+# Working off of Local desktop GIS workspace using Github repository
 ```{r - Set Working Directory}
 # Make sure working directory is automatically set to your local github folder
 getwd()
