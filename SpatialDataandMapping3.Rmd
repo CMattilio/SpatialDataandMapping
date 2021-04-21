@@ -231,7 +231,7 @@ ggplot(df, aes(y=Latitude, x=Longitude)) +
 
 
 #We are looking at a very zoomed in area. Imagine you want to compare your study area to the rest of Fremont County. 
-```{r - Let's try changing the extent to which our map is bound! ,message=F}
+```{r - Lets try changing the extent to which our map is bound ,message=F}
 
 #Re-read in your spatial data
 GAPCover <- raster("GAP_output.tif")
