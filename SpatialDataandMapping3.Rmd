@@ -3,8 +3,6 @@ title: "SpatialData_and_Mapping"
 output:
   pdf_document: default
   html_document: default
-editor_options:
-  chunk_output_type: console
 ---
 ---
 title: "SpatialData_and_Mapping"
@@ -13,7 +11,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{R - Install Packages}
+```{R - Install Packages, message=F}
 packages<-c("sf", "raster", "rgdal", "rgeos", "sp", "tidyverse", "rmarkdown","RColorBrewer")
 
 package.check <- lapply(packages,FUN = function(x) {
@@ -34,7 +32,7 @@ getwd()
 
 Vector data consists of points, lines, and/or polygons with spatial coordinates
 # Load Vector Data
-```{r - Load Vector Data}
+```{r - Load Vector Data, message=F}
 
 # Read in dataset of leafy spurge presence points in Fremont Co, WY
 SpurgeFull <- readOGR(dsn = ".", layer = "SpurgeFull")
@@ -233,9 +231,11 @@ ggplot(df, aes(y=Latitude, x=Longitude)) +
 
 #We are looking at a very zoomed in area. Imagine you want to compare your study area to the rest of Fremont County. 
 ```{r - Lets try changing the extent to which our map is bound ,message=F}
+rm(list = ls())
 
 #Re-read in your spatial data
 GAPCover <- raster("GAP_output.tif")
+Elevation <- raster("elev_output.tif")
 SpurgeFull <- readOGR(dsn = ".", layer = "SpurgeFull")
 FremontMRoads <- readOGR(dsn = ".", layer = "FremontMainRoads")
 FremontWater <- readOGR(dsn = ".", layer = "WaterwaysFremont")
@@ -248,7 +248,7 @@ FremontMRoads <- spTransform(FremontMRoads, CRS(proj))
 FremontWater <- spTransform(FremontWater, CRS(proj))
 FremontCo <- spTransform(FremontCo, CRS(proj))
 
-#With raster data, you can use mask or crop to cut it down. In this case we are going to mask our raster down to the size of Fremont County to get a moew zoomed-out view of our data.
+#With raster data, you can use mask or crop to cut it down. In this case we are going to mask our raster down to the size of Fremont County to get a more zoomed-out view of our data.
 ```
 
 
@@ -258,6 +258,7 @@ FremontCo <- spTransform(FremontCo, CRS(proj))
 ```{r - Check out data again}
 plot(FremontCo)
 plot(GAPCover, add=T, alpha=.4) 
+plot(Elevation, add=T, alpha=.3)
 plot(SpurgeFull, add=T, color="green")
 plot(FremontMRoads, add=T)
 plot(FremontWater, add=T, color="blue") 
@@ -265,7 +266,7 @@ plot(FremontWater, add=T, color="blue")
 
 # You may have noticed, we need to crop the raster, SprugeFull, and FremontWater to just fit inside Fremont County Boarders. Let's clean up our data. 
 ```{r - Plot GAPCover for all of Fremont County}
-  
+
   #We will mask our raster and then convert it into points, which must be done to plot with ggplot.
   GAPCover<-mask(GAPCover,FremontCo)
   map.p <- rasterToPoints(GAPCover)
@@ -282,7 +283,7 @@ plot(FremontWater, add=T, color="blue")
   SpurgeFullF <- fortify(SpurgeFull)
   FremontMRoadsF<-fortify(FremontMRoads)
   gap.df.f<-fortify(gap.df)
-  FremontCo.F<-fortify(FremontCo)
+  FremontCoF<-fortify(FremontCo)
   
   #plot all together!
   ggplot(gap.df.f, aes(y=Latitude, x=Longitude)) +
@@ -297,28 +298,19 @@ plot(FremontWater, add=T, color="blue")
     geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
 ```
   
-# Elevation map - all Fremont Co
-```{r Plot all data into one lovely map w/ Elevation,message=F}
-  
-  # You can do this for Elevation too, if you're interested, but 1st mask it first to Fremont Co!
-  Elevation<-mask(Elevation,FremontCo)
-  
-  #raster to points for ggplot!
-  map.p <- rasterToPoints(Elevation)
-  elev.df <- data.frame(map.p)
-  #Make appropriate column headings
-  colnames(df)<-c("Longitude", "Latitude", "Elevation")
-  elev.df<-fortify(df)
-  
-  #Elevation map - you'll have to give this a minute or two to plot!
-  ggplot(elev.df, aes(y=Latitude, x=Longitude)) +
-    geom_raster(aes(fill=Elevation))+
-    geom_polygon(data=FremontCoF, aes(x=long, y=lat),color = "black", fill="NA", size=1)+
-    theme_minimal()+
-    theme(panel.grid = element_blank(), axis.text = element_blank())+
-    labs(x="", y="", fill="Elevation (m)")+
-    scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
-    geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "cadetblue3")+
-    geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
-    geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
+# You try it - Elevation map - all Fremont Co
+```{r - Plot all data into one lovely map w/ Elevation,message=F}
+
+  # You can do this for Elevation too, but 1st mask it first to Fremont Co!
+ 
+# -----Your code here!----- # 
+
+  # Next you will need to convert the raster to points- try it!
+
+# -----Your code here!----- # 
+
+  # Last, plot it all w/ggplot! (you can use the GAPCover code for reference!)
+
+# -----Your code here!----- # 
+
 ```
