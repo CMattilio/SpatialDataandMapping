@@ -89,9 +89,8 @@ proj4string(FremontCo)
 ** **
 ``` {r - Projections}
 
-#you can try 
-identical(crs(SpurgeFull),crs(study_area))
-identicalCRS(SpurgeFull,study_area)
+#try some new ways here!
+
 ```
 
 
@@ -264,7 +263,7 @@ plot(FremontMRoads, add=T)
 plot(FremontWater, add=T, color="blue") 
 ```
 
-# You may have noticed, we need to crop the raster, SprugeFull, and FremontWater to just fit inside Fremont County Boarders. Let's clean up our data. 
+# Let's clean up our data. 
 ```{r - Plot GAPCover for all of Fremont County}
 
   #We will mask our raster and then convert it into points, which must be done to plot with ggplot.
