@@ -20,7 +20,7 @@ package.check <- lapply(packages,FUN = function(x) {
     library(x, character.only = TRUE)}})
 
 # clean environment
-rm(packages)
+rm(packages, package.check)
 ```
 
 # Working off of Local desktop GIS workspace using Github repository
@@ -49,8 +49,9 @@ head(FremontCo)
 table(is.na(SpurgeFull$Latitude))# must be FALSE here! No TRUES. 
 table(is.na(SpurgeFull$Longitude))# must be FALSE here! No TRUES. 
 
-# Plot dataset. May take a bit
+# Plot data set. May take a bit
 plot(SpurgeFull)
+
 # Not that informative, add some spatial context with Fremont Co border and a plot again
 ```
 
@@ -122,7 +123,7 @@ plot(FremontMRoads, add = T, border = "grey")
 ```{r - Cleaning up plots}
 # Lets make a cleaner version of the intersections between the study area and our water and roads
 FremontWater <- gIntersection(FremontWater, study_area)
-FremontMRoads <- gIntersection(FremontMRoads, study_area)
+#FremontMRoads <- gIntersection(FremontMRoads, study_area)
 
 plot(SpurgeFull)
 plot(study_area, add = T, border = "red")
@@ -152,7 +153,6 @@ ggplot() +
   labs(x="",y="")+
   theme(panel.grid=element_blank(), axis.text=element_blank())
 
-
 # Plot data sets with new clipped extent (just our study area)
 ggplot() +
   geom_polygon(data = study_areaF, aes(x=long, y=lat), fill = NA, color = "black") +
@@ -168,7 +168,7 @@ ggplot() +
 
 # Raster data is made up of a grid of pixels filled with values. These can be continuous variables like elevation, thematic values like landcover, or reflectance values like remote sensing imagery. 
 ```{r - Raster Data}
-# For this project, we have one continuous topographic raster and one thematic landcover raster
+# For this project, we have one continuous topographic raster and one thematic landcover raster.
 
 # Import elevation
 Elevation <- raster("elev_output.tif")
@@ -196,7 +196,7 @@ GAPCover.c <- crop(GAPCover, study_area)
 # Take a look at the raster data again, why do we have to mask it?
 ** **
   
-```{r - Plot Raster Data ,message=F}
+```{r - Plot Raster Data}
 plot(Elevation)
 plot(Elevation.c)
 plot(GAPCover)
@@ -218,7 +218,6 @@ df<-fortify(df)
 ggplot(df, aes(y=Latitude, x=Longitude)) +
   geom_raster(aes(fill=GAPCover))+
   theme_minimal()+
-  geom_polygon(data=study_areaF, aes(x=long, y=lat),color = "black", fill="NA", size=1)+
   theme(panel.grid = element_blank(), axis.text = element_blank())+
   labs(x="", y="")+
   scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
@@ -253,24 +252,23 @@ FremontCo <- spTransform(FremontCo, CRS(proj))
 
 #We know we need to mask/crop the GAPCover raster, but what other data do we need to crop? Take a look below.
 ** ** 
+
 ```{r - Check out data again}
 plot(FremontCo)
-plot(GAPCover, add=T, alpha=.4) #yes
-plot(SpurgeFull, add=T, color="green") #yes
-plot(FremontMRoads, add=T)#no
-plot(FremontWater, add=T, color="blue") #yes
+plot(GAPCover, add=T, alpha=.4) 
+plot(SpurgeFull, add=T, color="green")
+plot(FremontMRoads, add=T)
+plot(FremontWater, add=T, color="blue") 
 ```
 
-# You may have noticed, we need to crop the raster, SprugeFull, and FremontWater. Let's clean up our data. 
+# You may have noticed, we need to crop the raster, SprugeFull, and FremontWater to just fit inside Fremont County Boarders. Let's clean up our data. 
 ```{r - Plot GAPCover for all of Fremont County}
   
   #We will mask our raster and then convert it into points, which must be done to plot with ggplot.
   GAPCover<-mask(GAPCover,FremontCo)
   map.p <- rasterToPoints(GAPCover)
   gap.df <- data.frame(map.p)
-  
-  #Make appropriate column headings
-  colnames(gap.df)<-c("Longitude", "Latitude", "GAPCover")
+  colnames(gap.df)<-c("Longitude", "Latitude", "GAPCover")  #and make appropriate column headings
   gap.df<-fortify(gap.df)
   
   #crop water and spurge to just Fremont Co
