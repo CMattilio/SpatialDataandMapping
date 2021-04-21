@@ -116,9 +116,9 @@ proj4string(FremontCo)
 
 ```
 
-
-```{r - Plotting}
-# Plot datasets to make sure they line up. May take a bit
+#Plot time
+```{r - Plotting, message=F}
+# Plot data sets to make sure they line up. May take a bit
 plot(SpurgeFull)
 plot(FremontCo, add = T, border = "red")
 plot(FremontWater, add = T, border = "blue")
