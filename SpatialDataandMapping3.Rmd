@@ -86,7 +86,7 @@ proj4string(FremontCo)
 
 #Can you think of other ways to make sure projection systems are the same? List 1 other way.
 ** **
-``` {r - Projection}
+``` {r - Projections}
 
 #you can try 
 identical(crs(SpurgeFull),crs(study_area))
