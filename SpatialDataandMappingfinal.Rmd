@@ -217,9 +217,12 @@ plot(FremontMRoads_sub, add = T, border = "grey")
 ```{r - Spatial maps in ggplot, message=F}
 
 # Have to fortify to plot with ggplot
-study_areaF <- fortify(study_area)
+
 # Make SpurgePoints a dataframe
 SpurgePointdf <- as.data.frame(SpurgePoint)
+
+#fortify
+study_areaF <- fortify(study_area)
 SpurgePointF <- fortify(SpurgePointdf)
 FremontWaterF <- fortify(FremontWater_sub)
 FremontCoF <- fortify(FremontCo)
@@ -228,20 +231,21 @@ FremontMRoadsF <- fortify(FremontMRoads_sub)
 # Plot spurge and Fremont country to continue to get oriented
 ggplot() +
   geom_polygon(data = FremontCoF, aes(x=long, y=lat), fill = NA, color = "black") +
-  geom_point(data = SpurgePointF, aes(x=Longitude, y=Latitude), fill = "NA", color = "green") +
+  geom_point(data = SpurgePointF, aes(x=Longitude, y=Latitude), fill = "NA", color = "yellowgreen") +
   theme_minimal()+
   labs(x="",y="")+
   theme(panel.grid=element_blank(), axis.text=element_blank())
 
 # Plot data sets with new clipped extent (just our study area)
 ggplot() +
-  geom_polygon(data = study_areaF, aes(x=long, y=lat), fill = NA, color = "black") +
   geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), fill = "blue", color = "blue" ) + 
-  geom_point(data = SpurgePointF, aes(x=Longitude, y=Latitude), fill = "yellow", color = "yellow" ) +
+  geom_point(data = SpurgePointF, aes(x=Longitude, y=Latitude), fill = "yellowgreen", color = "yellowgreen", size=1) +
   geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black" ) +
   theme_minimal()+
   labs(x="", y="")+
-  theme(panel.grid = element_blank(), axis.text = element_blank())
+  theme(panel.grid = element_blank(), axis.text = element_blank())+
+    geom_polygon(data = study_areaF, aes(x=long, y=lat), fill = NA, color = "darkred")
+
 ```
 
 # Processing of Spatial Data - Raster
@@ -331,8 +335,7 @@ ggplot(df, aes(y=Latitude, x=Longitude)) +
   scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
   geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "blue")+
   geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
-  #geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
-  geom_point(data = SpurgePointF, aes(Longitude, y=Latitude, color = "chartreuse"))
+  geom_point(data = SpurgePointF, aes(Longitude, y=Latitude),color= "yellowgreen", size=1)
 
 ```
 
