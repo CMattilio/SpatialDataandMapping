@@ -180,7 +180,6 @@ plot(GAPCover)
 # Let's check it out by reading in a data table that corresponds to GAPCover values
 GAP_LUT <- read.csv("GAP_LU.txt", header = TRUE, sep = ",", dec = ".")
 # Explore this data table
-
 ```
 
 # What column(s) are we pulling values from when we plot GAPCover
