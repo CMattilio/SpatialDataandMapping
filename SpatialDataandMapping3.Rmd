@@ -381,7 +381,7 @@ ggplot(df, aes(y=Latitude, x=Longitude)) +
   theme_minimal()+
   theme(panel.grid = element_blank(), axis.text = element_blank())+
   labs(x="", y="")+
-  scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
+  scale_fill_gradient(colours=brewer.pal(9, "RdPu"))+
   geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "blue")+
   geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
   #geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
@@ -389,7 +389,7 @@ ggplot(df, aes(y=Latitude, x=Longitude)) +
 
 ```
 
-# How to best share maps with colaborators?
+# How to best share maps with collaborators?
 ```{r - Sharing Maps, message=F}
 
 # share_map <- mapview(study_area, fill = FALSE, lwd = 2.2) + mapview(SpurgeFull_sub, map.types = mapviewGetOption("OpenStreetMap")) + mapview(Elevation_sub) + mapview(FremontMRoads_sub) + mapview(FremontCo, fill = FALSE) + mapview(FremontWater_sub)
