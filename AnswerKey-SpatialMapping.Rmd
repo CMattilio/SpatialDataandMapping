@@ -1,0 +1,324 @@
+---
+title: "answer key -- spatial mapping"
+output: html_document
+---
+
+```{R - Install Packages, messages=F}
+packages<-c("sf", "raster", "rgdal", "rgeos", "sp", "tidyverse", "rmarkdown","RColorBrewer", "mapview")
+
+lapply(packages,FUN = function(x) {
+  if (!require(x, character.only = TRUE)) {
+    install.packages(x, dependencies = TRUE)
+    library(x, character.only = TRUE)}})
+
+# clean environment
+rm(packages)
+```
+
+# Working off of Local desktop GIS workspace using Github repository
+```{r - Set Working Directory}
+# Make sure working directory is automatically set to your local github folder
+getwd()
+
+```
+
+Vector data consists of points, lines, and/or polygons with spatial coordinates
+# Load Vector Data
+```{r - Load Vector Data, message=F}
+
+# Read in data set of leafy spurge presence points in Fremont Co, WY
+SpurgeFull <- readOGR(dsn = ".", layer = "SpurgeFull")
+study_area <- readOGR(dsn = ".", layer = "StudyArea")
+FremontMRoads <- readOGR(dsn = ".", layer = "FremontMainRoads")
+FremontWater <- readOGR(dsn = ".", layer = "WaterwaysFremont")
+FremontCo <- readOGR(dsn = ".", layer = "FremontCo")
+
+```
+
+# What is the projection that your data are in? Figure this out and specify below. Specify at least 2 different fuctions you can use to check this.
+
+**Data are in "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs". You can use proj4string(), crs(), or st_crs() to check the coordinate system of your spatial data.**
+
+``` {r - Projection Systems, message=F}
+# First, check coordinate system and projection, otherwise these will not align when plotting
+proj4string(SpurgeFull)
+proj4string(study_area)
+proj4string(FremontMRoads)
+proj4string(FremontWater)
+proj4string(FremontCo)
+```
+
+#Change the projection sysmtes so that all data has the same CRS.
+```{r - Projection, message=F}
+proj <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
+SpurgeFull <- spTransform(SpurgeFull, CRS(proj))
+study_area <- spTransform(study_area, CRS(proj))
+FremontMRoads <- spTransform(FremontMRoads, CRS(proj))
+FremontWater <- spTransform(FremontWater, CRS(proj))
+FremontCo <- spTransform(FremontCo, CRS(proj))
+
+# make sure all projections line up
+proj4string(SpurgeFull)
+proj4string(study_area)
+proj4string(FremontMRoads)
+proj4string(FremontWater)
+proj4string(FremontCo)
+# perfect!
+```
+
+#Can you think of other ways to make sure projection systems are the same? List 1 other way.
+**You can use identical(crs()) to look at two objects, or identicalCRS() to check if the projection system between two objects are the same.**
+``` {r - Projections, message=F}
+#you can try 
+identical(crs(SpurgeFull),crs(study_area))
+identicalCRS(SpurgeFull,study_area)
+```
+
+#Plot time
+```{r - Plotting, message=F}
+# Plot datasets to make sure they line up. May take a bit
+plot(SpurgeFull)
+plot(FremontCo, add = T, border = "red")
+plot(FremontWater, add = T, border = "blue")
+plot(FremontMRoads, add = T, border = "grey")
+
+# You might notice some issues! 
+```
+
+# What is wrong with the map right now?
+**All of the data have different extents.** 
+
+```{r - Changing extent of map, message=F}
+
+# First lets clip the data to only look at Lander/Riverton area
+FremontMRoads <- FremontMRoads[study_area,]
+SpurgeFull <- SpurgeFull[study_area,]
+FremontWater <- FremontWater[study_area,]
+
+# Check to make sure it worked
+plot(SpurgeFull)
+plot(study_area, add = T, border = "red")
+plot(FremontWater, add = T, border = "blue")
+plot(FremontMRoads, add = T, border = "grey")
+```
+
+# Why do the roads and rivers still extend outside the study area polygon?
+** ** 
+
+```{r - Cleaning up plots, message=F}
+# Lets make a cleaner version of the intersections between the study area and our water and roads
+FremontWater_sub <- crop(FremontWater, study_area)
+FremontMRoads_sub <- crop(FremontMRoads, study_area)
+
+plot(SpurgeFull_sub)
+plot(study_area, add = T, border = "red")
+plot(FremontWater_sub, add = T, border = "blue")
+plot(FremontMRoads_sub, add = T, border = "grey")
+```
+
+# What has changed in the data? 
+# hint:look at length of some features.
+** ** 
+gLength(FremontMRoads_sub) 
+gLength(FremontMRoads)
+```{r - Spatial maps in ggplot, message=F}
+
+# Have to fortify to plot with ggplot
+study_areaF <- fortify(study_area)
+SpurgeFullF <- fortify(SpurgeFull)
+FremontWaterF <- fortify(FremontWater_sub)
+FremontCoF <- fortify(FremontCo)
+FremontMRoadsF <- fortify(FremontMRoads_sub)
+
+# Plot spurge and Fremont country to continue to get oriented
+ggplot() +
+  geom_polygon(data = FremontCoF, aes(x=long, y=lat), fill = NA, color = "black") +
+  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), fill = "NA", color ="green")+
+  theme_minimal()+
+  labs(x="",y="")+
+  theme(panel.grid=element_blank(), axis.text=element_blank())
+
+# Plot data sets with new clipped extent (just our study area)
+ggplot() +
+  geom_polygon(data = study_areaF, aes(x=long, y=lat), fill = NA, color = "black") +
+  geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), fill = "blue", color = "blue" ) +    
+  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), fill = "yellow", color = "yellow" ) +    
+  geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black" ) +
+  theme_minimal()+
+  labs(x="", y="")+
+  theme(panel.grid = element_blank(), axis.text = element_blank())
+
+```
+
+
+# Raster data is made up of a grid of pixels filled with values. These can be continuous variables like elevation, thematic values like landcover, or reflectance values like remote sensing imagery. 
+```{r - Raster Data, message=F}
+
+# Import elevation
+Elevation <- raster("elev_output.tif")
+
+# Import GAP landcover data
+GAPCover <- raster("GAP_output.tif")
+# Alright, all data is in!
+
+# What to we need to do to make sure things will line up?
+proj4string(Elevation)
+proj4string(GAPCover)
+
+proj
+Elevation <- projectRaster(Elevation, crs = proj)
+GAPCover <- projectRaster(GAPCover, crs = proj)
+
+proj4string(Elevation)
+proj4string(GAPCover)
+# all looks great!
+```
+
+# Read in Look Up Table of Sorts for GAPCover Data
+```{r - Raster Look Up Table for GAP, message = F}
+plot(GAPCover)
+# Where are these values in the legend coming from? And what do they mean?
+# Let's check it out by reading in a data table that corresponds to GAPCover values
+GAP_LUT <- read.csv("GAP_LU.txt", header = TRUE, sep = ",", dec = ".")
+# Explore this data table
+```
+
+# What column(s) are we pulling values from when we plot GAPCover
+**We are pulling values from the VALUE column, which coincides with cover classes from the Level3 cover category**
+
+# Describe differences between the three CN_LEVELS 
+**The difference between the CN_LEVELS is the level of detail they provide on cover classes, with Level 1 being the most coarse and Level 3 being the most descriptive**
+
+
+# Crop/Mask Raster Data
+```{r Plot all data into one lovely map!, message=F}
+
+# we are going to clip our rasters to match the clipped extent of our other data.
+# We have two rasters for you to play with, Elevation, and GAP Cover. 
+Elevation_sub <- crop(Elevation, study_area)
+GAPCover_sub <- crop(GAPCover, study_area)
+```
+
+#What do we need to look at in a Raster other than projection?
+**Resolution!**
+
+```{r - Rasters continued, message=F}
+
+res(Elevation)
+res(GAPCover)
+# Great! They match
+
+# a few ways to change the raster cell size, here is a simple one for our purposes
+Elevation_sub1 <- disaggregate(Elevation_sub, fact = 5, method = "bilinear")
+
+res(Elevation_sub)
+res(Elevation_sub1)
+# cool... but what does this mean?
+
+par(mfrow = c(1, 2))
+plot(Elevation_sub)
+plot(Elevation_sub1)
+# Looks much better! 
+
+rm(Elevation_sub1)
+dev.off()
+```
+
+# Why not have a very fine resolution for all rasters all the time?
+**It takes a long time to plot/manipulate data.**
+
+
+# Take a look at the raster data again, why do we have to mask it?
+**The raster extends outside of the study area.**
+  
+```{r - Plot Raster Data}
+par(mfrow = c(1, 2))
+plot(Elevation)
+plot(Elevation_sub)
+plot(GAPCover)
+plot(GAPCover_sub)
+```
+
+```{r - Plot all data types together in ggplot}
+#Lets start with plotting GAPCover.
+
+#We  need to convert GAP landcover data from a raster to points to use in ggplot
+map.p <- rasterToPoints(GAPCover_sub)
+df <- data.frame(map.p)
+
+#Make appropriate column headings
+colnames(df)<-c("Longitude", "Latitude", "GAPCover")
+df<-fortify(df)
+
+#GAPCover map - you'll have to give this a minute or two to plot!
+ggplot(df, aes(y=Latitude, x=Longitude)) +
+  geom_raster(aes(fill=GAPCover))+
+  theme_minimal()+
+  theme(panel.grid = element_blank(), axis.text = element_blank())+
+  labs(x="", y="")+
+  scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
+  geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "blue")+
+  geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
+  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
+
+```
+
+
+# How to best share maps with colaborators?
+```{r - Sharing Maps, message=F}
+
+share_map <- mapview(study_area, fill = FALSE, lwd = 2.2) + mapview(SpurgeFull_sub, map.types = mapviewGetOption("OpenStreetMap")) + mapview(Elevation_sub) + mapview(FremontMRoads_sub) + mapview(FremontCo, fill = FALSE) + mapview(FremontWater_sub)
+share_map
+
+####  To make a HTML map to share
+#### DO NOT RUN THIS CODE CHUNK #### It will take a long time. It is only an example to work off.
+
+# setwd() # make this to a folder shared with collaborators like google drive or Box
+# mapshot(share_map,  url = paste0(getwd(), "/Fremont_County_Spurge.html")) #change map iteration each time unless you want to overwrite. Can provide a good history of maps with changing data
+
+```
+
+# Breakout room task 1
+```{r}
+# Make a new map (any type) using a combination of the available layers for all of Fremont county AND use this new layer. Detail the steps you need to take in order to make this map and code it out. Try to decrease the cell size to make a smoother looking map with any raster layers.
+
+FremontAgencies <- readOGR(dsn = ".", layer = "FremontAgencies")
+
+```
+
+# Breakout room task 2. 
+# Try making a map of elevation and water that fits inside of all Fremont County. 
+```{r - Lets try changing the extent to which our map is bound ,message=F}
+rm(list = ls())
+
+#Re-read in your spatial data
+Elevation <- raster("elev_output.tif")
+SpurgeFull <- readOGR(dsn = ".", layer = "SpurgeFull")
+FremontWater <- readOGR(dsn = ".", layer = "WaterwaysFremont")
+FremontCo <- readOGR(dsn = ".", layer = "FremontCo")
+
+#mask data
+Elevation<-mask(Elevation,FremontCo)
+  map.p <- rasterToPoints(Elevation)
+  elev.df <- data.frame(map.p)
+  colnames(elev.df)<-c("Longitude", "Latitude", "elev")  #and make appropriate column headings
+  elev.df<-fortify(elev.df)
+  
+#Elevation map 
+  ggplot(elev.df, aes(y=Latitude, x=Longitude)) +
+    geom_raster(aes(fill=elev))+
+    geom_polygon(data=FremontCoF, aes(x=long, y=lat),color = "black", fill="NA", size=1)+
+    theme_minimal()+
+    theme(panel.grid = element_blank(), axis.text = element_blank())+
+    labs(x="", y="", fill="Elevation (m)")+
+    scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
+    geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "cadetblue3")+
+    geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")
+```
+
+  
+  
+  
+  
+  
+  
