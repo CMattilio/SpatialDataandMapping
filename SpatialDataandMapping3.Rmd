@@ -45,6 +45,9 @@ lapply(packages,FUN = function(x) {
 
 # clean environment
 rm(packages)
+
+# If you have plotting settings, remove them with the below code
+# dev.off()
 ```
 
 # Working off of Local desktop GIS workspace using Github repository
@@ -110,7 +113,6 @@ GAPCover <- raster("GAP_output.tif")
 # Nathan
 ``` {r - Projection Systems}
 # First, check coordinate system and projection, otherwise these will not align when plotting
-# proj4string(SpurgeFull)
 proj4string(SpurgePoint)
 proj4string(study_area)
 proj4string(FremontMRoads)
@@ -315,6 +317,7 @@ plot(Elevation)
 plot(Elevation_sub)
 plot(GAPCover)
 plot(GAPCover_sub)
+dev.off()
 # Let's dig into what this GAPCover raster is representing...
 ```
 
