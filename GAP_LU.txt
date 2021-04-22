@@ -1,0 +1,85 @@
+OID_,VALUE,COUNT,LEVEL1,LEVEL2,LEVEL3,RED,GREEN,BLUE,CN_LEVEL1,CN_LEVEL2,CN_LEVEL3
+,1201,16707,1,12,1201,0.949019600000000,0.658823500000000,0.639215700000000,Human land use,Developed,"Developed, Open Space"
+,1202,5405,1,12,1202,0.929411800000000,0.486274500000000,0.458823500000000,Human land use,Developed,"Developed, Low Intensity"
+,1203,1539,1,12,1203,0.909803900000000,0.317647100000000,0.278431400000000,Human land use,Developed,"Developed, Medium Intensity"
+,1204,148,1,12,1204,0.709803900000000,0.117647100000000,0.078431400000000,Human land use,Developed,"Developed, High Intensity"
+,1301,107,1,13,1301,1.000000000000000,1.000000000000000,0.000000000000000,Human land use,Mining,"Quarries, Mines, Gravel Pits and Oil Wells"
+,1402,8116,1,14,1402,1.000000000000000,0.980000000000000,0.800000000000000,Human land use,Agriculture,Cultivated Cropland
+,1403,89658,1,14,1403,0.756862700000000,0.756862700000000,0.647058800000000,Human land use,Agriculture,Pasture/Hay
+,2102,45293,2,21,2102,0.000000000000000,0.000000000000000,1.000000000000000,Aquatic,Open water,Open Water (Fresh)
+,3121,86069,3,31,3121,0.904732300000000,0.900687500000000,0.735267700000000,Sparse and barren systems,"Beach, shore and sand",Inter-Mountain Basins Active and Stabilized Dune
+,3202,1576,3,32,3202,0.253160300000000,0.266839700000000,0.266056600000000,Sparse and barren systems,"Cliff, canyon and talus","Rocky Mountain Cliff, Canyon and Massive Bedrock"
+,3203,1989,3,32,3203,0.185001700000000,0.194998300000000,0.194426000000000,Sparse and barren systems,"Cliff, canyon and talus",Western Great Plains Cliff and Outcrop
+,3216,29585,3,32,3216,0.238219400000000,0.266637100000000,0.213362900000000,Sparse and barren systems,"Cliff, canyon and talus",Inter-Mountain Basins Cliff and Canyon
+,3301,11197,3,33,3301,0.866580100000000,0.873419900000000,0.873028300000000,Sparse and barren systems,Bluff and badland,Western Great Plains Badland
+,3304,40723,3,33,3304,0.350529600000000,0.369470400000000,0.368386100000000,Sparse and barren systems,Bluff and badland,Inter-Mountain Basins Shale Badland
+,3407,1,3,34,3407,0.714583500000000,0.771682500000000,0.785416500000000,Sparse and barren systems,"Playa, wash and mudflat",Inter-Mountain Basins Playa
+,3502,765,3,35,3502,1.000000000000000,1.000000000000000,1.000000000000000,Sparse and barren systems,Alpine sparse and barren,North American Alpine Ice Field
+,3503,27860,3,35,3503,0.900000000000000,0.900000000000000,0.900000000000000,Sparse and barren systems,Alpine sparse and barren,Rocky Mountain Alpine Bedrock and Scree
+,3601,121,3,36,3601,1.000000000000000,1.000000000000000,1.000000000000000,Sparse and barren systems,Other sparse and barren,Geysers and Hot Springs
+,4111,32453,4,41,4111,0.467209400000000,0.754872400000000,0.125127600000000,Forest and woodland systems,Deciduous dominated forest and woodland (xeric-mesic),Rocky Mountain Aspen Forest and Woodland
+,4112,2,4,41,4112,0.638146800000000,0.172375800000000,0.141853200000000,Forest and woodland systems,Deciduous dominated forest and woodland (xeric-mesic),Rocky Mountain Bigtooth Maple Ravine Woodland
+,4147,20774,4,41,4147,0.420454600000000,0.183036700000000,0.139545400000000,Forest and woodland systems,Deciduous dominated forest and woodland (xeric-mesic),Inter-Mountain Basins Curl-leaf Mountain Mahogany Woodland and Shrubland
+,4312,12,4,43,4312,0.680190500000000,0.383019900000000,0.199809500000000,Forest and woodland systems,Mixed deciduous/coniferous forest and woodland  (xeric-mesic),Western Great Plains Dry Bur Oak Forest and Woodland
+,4324,2505,4,43,4324,0.185896600000000,0.503806100000000,0.056193900000000,Forest and woodland systems,Mixed deciduous/coniferous forest and woodland  (xeric-mesic),Inter-Mountain Basins Aspen-Mixed Conifer Forest and Woodland
+,4525,1123,4,45,4525,0.356833000000000,0.010425200000000,0.549574800000000,Forest and woodland systems,Conifer dominated forest and woodland (xeric-mesic),Northern Rocky Mountain Subalpine Woodland and Parkland
+,4526,99312,4,45,4526,0.392193600000000,0.167806400000000,0.292589800000000,Forest and woodland systems,Conifer dominated forest and woodland (xeric-mesic),Rocky Mountain Foothill Limber Pine-Juniper Woodland
+,4527,211209,4,45,4527,0.540295300000000,0.478478400000000,0.239704700000000,Forest and woodland systems,Conifer dominated forest and woodland (xeric-mesic),Rocky Mountain Lodgepole Pine Forest
+,4528,6885,4,45,4528,0.154966500000000,0.765033500000000,0.203760400000000,Forest and woodland systems,Conifer dominated forest and woodland (xeric-mesic),Southern Rocky Mountain Dry-Mesic Montane Mixed Conifer Forest and Woodland
+,4529,7,4,45,4529,0.501569800000000,0.215270900000000,0.704729100000000,Forest and woodland systems,Conifer dominated forest and woodland (xeric-mesic),Northern Rocky Mountain Ponderosa Pine Woodland and Savanna
+,4530,2835,4,45,4530,0.604101500000000,0.259691600000000,0.660308400000000,Forest and woodland systems,Conifer dominated forest and woodland (xeric-mesic),Southern Rocky Mountain Ponderosa Pine Woodland
+,4531,160510,4,45,4531,0.063148500000000,0.436851500000000,0.425507100000000,Forest and woodland systems,Conifer dominated forest and woodland (xeric-mesic),Rocky Mountain Subalpine Dry-Mesic Spruce-Fir Forest and Woodland
+,4543,49591,4,45,4543,0.186297600000000,0.350000000000000,0.130000000000000,Forest and woodland systems,Conifer dominated forest and woodland (xeric-mesic),Middle Rocky Mountain Montane Douglas-fir Forest and Woodland
+,4544,4981,4,45,4544,0.528454000000000,0.486389100000000,0.391546000000000,Forest and woodland systems,Conifer dominated forest and woodland (xeric-mesic),Rocky Mountain Poor-Site Lodgepole Pine Forest
+,4548,5262,4,45,4548,0.627451000000000,0.125490200000000,0.941176500000000,Forest and woodland systems,Conifer dominated forest and woodland (xeric-mesic),Northwestern Great Plains - Black Hills Ponderosa Pine Woodland and Savanna
+,4609,144,4,46,4609,0.123746300000000,0.436253700000000,0.376017600000000,Forest and woodland systems,Conifer dominated forest and woodland (mesic-wet),Northern Rocky Mountain Mesic Montane Mixed Conifer Forest
+,4611,154873,4,46,4611,0.042929000000000,0.377071000000000,0.341052400000000,Forest and woodland systems,Conifer dominated forest and woodland (mesic-wet),Rocky Mountain Subalpine Mesic Spruce-Fir Forest and Woodland
+,5103,26438,5,51,5103,0.927057500000000,0.412942500000000,0.884359300000000,"Shrubland, steppe and savanna systems",Alpine and avalanche chute shrubland,Rocky Mountain Alpine Dwarf-Shrubland
+,5205,212079,5,52,5205,0.500950500000000,0.433632500000000,0.239049500000000,"Shrubland, steppe and savanna systems",Scrub shrubland,Inter-Mountain Basins Mixed Salt Desert Scrub
+,5302,174,5,53,5302,0.477647100000000,0.127613400000000,0.082352900000000,"Shrubland, steppe and savanna systems",Steppe,Northern Rocky Mountain Foothill Conifer Wooded Steppe
+,5307,1196648,5,53,5307,0.570986800000000,0.654282000000000,0.445718000000000,"Shrubland, steppe and savanna systems",Steppe,Inter-Mountain Basins Big Sagebrush Steppe
+,5308,301877,5,53,5308,0.766666700000000,0.769521300000000,0.630478700000000,"Shrubland, steppe and savanna systems",Steppe,Inter-Mountain Basins Montane Sagebrush Steppe
+,5703,196574,5,57,5703,0.774672300000000,0.125327700000000,0.189641500000000,"Shrubland, steppe and savanna systems",Sagebrush dominated shrubland,Inter-Mountain Basins Mat Saltbush Shrubland
+,5704,145275,5,57,5704,0.570688000000000,0.678884000000000,0.381116000000000,"Shrubland, steppe and savanna systems",Sagebrush dominated shrubland,Wyoming Basins Dwarf Sagebrush Shrubland and Steppe
+,5706,576388,5,57,5706,0.598559700000000,0.692814500000000,0.507185500000000,"Shrubland, steppe and savanna systems",Sagebrush dominated shrubland,Inter-Mountain Basins Big Sagebrush Shrubland
+,5805,2,5,58,5805,0.922621600000000,0.554176100000000,0.417378400000000,"Shrubland, steppe and savanna systems",Deciduous dominated shrubland,Northwestern Great Plains Shrubland
+,5806,695,5,58,5806,0.981194300000000,0.467166000000000,0.358805700000000,"Shrubland, steppe and savanna systems",Deciduous dominated shrubland,Rocky Mountain Lower Montane-Foothill Shrubland
+,5808,986,5,58,5808,0.877583500000000,0.614442200000000,0.042416500000000,"Shrubland, steppe and savanna systems",Deciduous dominated shrubland,Northern Rocky Mountain Montane-Foothill Deciduous Shrubland
+,5812,3480,5,58,5812,0.870902300000000,0.320402200000000,0.049097700000000,"Shrubland, steppe and savanna systems",Deciduous dominated shrubland,Northern Rocky Mountain Subalpine Deciduous Shrubland
+,7102,43119,7,71,7102,0.992605500000000,0.807394500000000,0.984012100000000,Grassland systems,Alpine grassland,Rocky Mountain Alpine Fell-Field
+,7103,164731,7,71,7103,0.664681200000000,0.533289000000000,0.966711000000000,Grassland systems,Alpine grassland,Rocky Mountain Dry Tundra
+,7203,12208,7,72,7203,0.943261000000000,0.932923600000000,0.596739000000000,Grassland systems,Montane grassland,"Northern Rocky Mountain Lower Montane, Foothill and Valley Grassland"
+,7204,22530,7,72,7204,0.950504900000000,0.872318500000000,0.589495100000000,Grassland systems,Montane grassland,Northern Rocky Mountain Subalpine-Upper Montane Grassland
+,7205,59767,7,72,7205,0.945146500000000,0.534853500000000,0.757531600000000,Grassland systems,Montane grassland,Rocky Mountain Subalpine-Montane Mesic Meadow
+,7206,6898,7,72,7206,0.985230800000000,0.977141100000000,0.654769200000000,Grassland systems,Montane grassland,Southern Rocky Mountain Montane-Subalpine Grassland
+,7306,57166,7,73,7306,0.885816800000000,0.741411200000000,0.654183200000000,Grassland systems,Lowland grassland and prairie (xeric-mesic),Northwestern Great Plains Mixedgrass Prairie
+,7309,75,7,73,7309,0.929553000000000,0.961034000000000,0.478966000000000,Grassland systems,Lowland grassland and prairie (xeric-mesic),Western Great Plains Sand Prairie
+,8106,1490,8,81,8106,0.871825100000000,0.126387300000000,0.068174900000000,Recently disturbed or modified,Harvested forest,Harvested Forest - Northwestern Conifer Regeneration
+,8107,3040,8,81,8107,0.930374500000000,0.169076400000000,0.109625500000000,Recently disturbed or modified,Harvested forest,Harvested forest-Shrub Regeneration
+,8108,1356,8,81,8108,0.940528200000000,0.290252800000000,0.239471800000000,Recently disturbed or modified,Harvested forest,Harvested Forest - Grass/Forb Regeneration
+,8302,43111,8,83,8302,0.648940700000000,0.131059300000000,0.133261300000000,Recently disturbed or modified,Recently burned,Recently burned forest
+,8303,26,8,83,8303,0.748777800000000,0.151222200000000,0.153763000000000,Recently disturbed or modified,Recently burned,Recently burned grassland
+,8401,23,8,84,8401,0.968536700000000,0.131463300000000,0.519659700000000,Recently disturbed or modified,Introduced vegetation,Introduced Upland Vegetation - Treed
+,8402,17,8,84,8402,0.908635000000000,0.191365000000000,0.651481100000000,Recently disturbed or modified,Introduced vegetation,Introduced Upland Vegetation - Shrub
+,8404,1062,8,84,8404,0.756741900000000,0.343258100000000,0.570230900000000,Recently disturbed or modified,Introduced vegetation,Introduced Upland Vegetation - Annual Grassland
+,8406,11643,8,84,8406,0.957681400000000,0.142318600000000,0.539888700000000,Recently disturbed or modified,Introduced vegetation,Introduced Riparian and Wetland Vegetation
+,8407,9,8,84,8407,0.357454000000000,0.868736000000000,0.589486000000000,Recently disturbed or modified,Introduced vegetation,Introduced Upland Vegetation - Perennial Grassland and Forbland
+,9227,746,9,92,9227,0.568786000000000,0.751214000000000,0.706382700000000,Riparian and wetland systems,"Freshwater herbaceous marsh, swamp, or baygall",North American Arid West Emergent Marsh
+,9403,433,9,94,9403,0.075961500000000,0.207535100000000,0.444038500000000,Riparian and wetland systems,Interdunal wetland,Inter-Mountain Basins Interdunal Swale Wetland
+,9503,363,9,95,9503,0.720106000000000,0.740943100000000,0.819894000000000,Riparian and wetland systems,Bog or fen,Rocky Mountain Subalpine-Montane Fen
+,9606,16174,9,96,9606,0.614474700000000,0.441496000000000,0.878504000000000,Riparian and wetland systems,Wet meadow or prairie,Rocky Mountain Alpine-Montane Wet Meadow
+,9705,46,9,97,9705,0.363197200000000,0.392266100000000,0.802663100000000,Riparian and wetland systems,Depressional wetland,Great Plains Prairie Pothole
+,9707,7015,9,97,9707,0.346055600000000,0.517030300000000,0.577190500000000,Riparian and wetland systems,Depressional wetland,Western Great Plains Open Freshwater Depression Wetland
+,9708,474,9,97,9708,0.605966800000000,0.580105700000000,0.959894300000000,Riparian and wetland systems,Depressional wetland,Columbia Plateau Vernal Pool
+,9710,5303,9,97,9710,0.563241500000000,0.852504100000000,0.944961500000000,Riparian and wetland systems,Depressional wetland,Western Great Plains Closed Depression Wetland
+,9711,30694,9,97,9711,0.033564400000000,0.323538200000000,0.486435600000000,Riparian and wetland systems,Depressional wetland,Western Great Plains Saline Depression Wetland
+,9714,4,9,97,9714,0.321289900000000,0.221671900000000,0.573718500000000,Riparian and wetland systems,Depressional wetland,Inter-Mountain Basins Alkaline Closed Depression
+,9810,80624,9,98,9810,0.320591300000000,0.303475900000000,0.456524100000000,Riparian and wetland systems,Floodplain and riparian,Inter-Mountain Basins Greasewood Flat
+,9823,9164,9,98,9823,0.191544700000000,0.568455300000000,0.520124100000000,Riparian and wetland systems,Floodplain and riparian,Western Great Plains Floodplain
+,9824,291,9,98,9824,0.082210500000000,0.619843100000000,0.677789500000000,Riparian and wetland systems,Floodplain and riparian,Northern Rocky Mountain Lower Montane Riparian Woodland and Shrubland
+,9825,857,9,98,9825,0.040435500000000,0.242110300000000,0.661096000000000,Riparian and wetland systems,Floodplain and riparian,Rocky Mountain Lower Montane Riparian Woodland and Shrubland
+,9830,81,9,98,9830,0.129173400000000,0.296493500000000,0.790826600000000,Riparian and wetland systems,Floodplain and riparian,Great Basin Foothill and Lower Montane Riparian Woodland and Shrubland
+,9832,9276,9,98,9832,0.414398700000000,0.847831600000000,0.905601300000000,Riparian and wetland systems,Floodplain and riparian,Rocky Mountain Subalpine-Montane Riparian Woodland
+,9837,4655,9,98,9837,0.402668300000000,0.379743000000000,0.940257000000000,Riparian and wetland systems,Floodplain and riparian,Rocky Mountain Subalpine-Montane Riparian Shrubland
+,9847,950,9,98,9847,0.030751400000000,0.478878200000000,0.489248600000000,Riparian and wetland systems,Floodplain and riparian,Northwestern Great Plains Riparian
+,9848,45018,9,98,9848,0.090883700000000,0.134741100000000,0.689116300000000,Riparian and wetland systems,Floodplain and riparian,Western Great Plains Riparian Woodland and Shrubland
