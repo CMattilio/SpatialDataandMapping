@@ -366,9 +366,6 @@ ggplot(df, aes(y=Latitude, x=Longitude)) +
 # Nathan
 ```{r - Sharing Maps, message=F}
 
-# share_map <- mapview(study_area, fill = FALSE, lwd = 2.2) + mapview(SpurgeFull_sub, map.types = mapviewGetOption("OpenStreetMap")) + mapview(Elevation_sub) + mapview(FremontMRoads_sub) + mapview(FremontCo, fill = FALSE) + mapview(FremontWater_sub)
-# share_map
-
 share_map <- mapview(study_area, fill = FALSE, lwd = 2.2) + mapview(SpurgePoint_sub, map.types = mapviewGetOption("OpenStreetMap")) + mapview(Elevation_sub) + mapview(FremontMRoads_sub) + mapview(FremontCo, fill = FALSE) + mapview(FremontWater_sub)
 share_map
 
@@ -382,17 +379,20 @@ share_map
 
 
 # Breakout room task  
-# Try making a map of elevation and water that fits inside of all Fremont County. 
+# Try making a map of slope that fits inside of all Fremont County. 
 # All
 ```{r - Lets try changing the extent to which our map is bound ,message=F}
 
 # Make a new map (any type) using a combination of the available layers for all of Fremont county AND use this new layer, slope_output.tif. 
+
+# Read in raster for slope
 Slope <- raster("slope_output.tif")
+
 #Detail the steps you need to take in order to make this map and code it out. Try to decrease the cell size to make a smoother looking map with any raster layers.
 
 rm(list = ls())
 
-#Re-read in your spatial data
+#Re-read in your spatial data, if you need to
 GAPCover <- raster("GAP_output.tif")
 Elevation <- raster("elev_output.tif")
 SpurgePoints <- readOGR(dsn = ".", layer = "SpurgePoints")
@@ -408,7 +408,7 @@ FremontCo <- readOGR(dsn = ".", layer = "FremontCo")
 
 # -----Your code here!----- # 
 
-  # Last, plot it all w/ggplot! (you can use the GAPCover code for reference!)
+  # Last, plot it all w/ggplot! (you can use the Elevation code for reference!)
 
 # -----Your code here!----- # 
 
