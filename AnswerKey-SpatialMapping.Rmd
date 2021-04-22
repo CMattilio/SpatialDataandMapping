@@ -183,7 +183,7 @@ GAP_LUT <- read.csv("GAP_LU.txt", header = TRUE, sep = ",", dec = ".")
 ```
 
 # What column(s) are we pulling values from when we plot GAPCover
-**We are pulling values from the VALUE column, which conincides with cover classes from the Level3 cover category**
+**We are pulling values from the VALUE column, which coincides with cover classes from the Level3 cover category**
 
 # Describe differences between the three CN_LEVELS 
 **The difference between the CN_LEVELS is the level of detail they provide on cover classes, with Level 1 being the most coarse and Level 3 being the most descriptive**
