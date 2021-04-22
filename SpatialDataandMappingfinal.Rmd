@@ -12,7 +12,6 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
-# Courtney
 ```{R - Install Packages, message=F}
 #Install and Library for individual packages, if needed
 #install.packages("sf")
@@ -51,7 +50,6 @@ rm(packages)
 ```
 
 # Working off of Local desktop GIS workspace using Github repository
-# Courtney
 ```{r - Set Working Directory}
 # Make sure working directory is automatically set to your local github folder
 getwd()
@@ -60,7 +58,6 @@ getwd()
 
 Vector data consists of points, lines, and/or polygons with spatial coordinates
 # Load Vector Data
-# Courtney
 ```{r - Load Vector Data, message=F}
 
 # Read in dataset of leafy spurge presence points in Fremont Co, WY
@@ -90,7 +87,6 @@ plot(SpurgePoint)
 
 # Now, read in raster data...
 # Raster data is made up of a grid of pixels filled with values. These can be continuous variables like elevation, thematic values like landcover, or reflectance values like remote sensing imagery. 
-# Courtney
 ```{r - Load raster data}
 # For this project, we have one continuous topographic raster and one thematic landcover raster.
 
@@ -110,7 +106,6 @@ GAPCover <- raster("GAP_output.tif")
 # What is the projection that your data are in? Figure this out and specify below. Specify at least 2 different fuctions you can use to check this.
 ** ** 
 
-# Nathan
 ``` {r - Projection Systems}
 # First, check coordinate system and projection, otherwise these will not align when plotting
 proj4string(SpurgePoint)
@@ -123,7 +118,6 @@ proj4string(FremontCo)
 # What happens if your projection systems don't match? How do the two plots below differ?
 ** ** 
 
-# Nathan
 ``` {r - Projection mismatch, message=F}
 # To see the difference a projection makes
 proj <- "+proj=tmerc +lat_0=40.5 +lon_0=-108.75 +k=0.9999375 +x_0=600000 +y_0=0 +datum=NAD83 +units=us-ft +no_defs +ellps=GRS80 +towgs84=0,0,0"
@@ -140,7 +134,6 @@ dev.off()
 
 
 #Change the projection systems so that all data has the same CRS.
-# Nathan
 ```{r - Correct projection, message=F}
 proj <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
 SpurgePoint <- spTransform(SpurgePoint, CRS(proj))
@@ -159,7 +152,6 @@ proj4string(FremontCo)
 ```
 
 # Now, do the same projection changes for the raster data, Elevation and GAPCover
-# Nathan
 ```{r - Raster Projections}
 # What to we need to do to make sure things will line up?
 proj4string(Elevation)
@@ -178,7 +170,6 @@ proj4string(GAPCover)
 #Can you think of other ways to make sure projection systems are the same? List 1 other way.
 ** **
 
-# Nathan
 ``` {r - Projections}
 
 #try some new ways here!
@@ -186,7 +177,7 @@ proj4string(GAPCover)
 ```
 
 #Plot time
-# Chloe
+
 ```{r - Plotting, message=F}
 # Plot data sets to make sure they line up. May take a bit
 plot(SpurgePoint)
@@ -201,7 +192,6 @@ plot(FremontMRoads, add = T, border = "grey")
 ** ** 
 
 # Spatial Data Processing - Vector Data
-# Chloe
 ```{r - Changing extent of map, message=F}
 
 # First lets clip the data to only look at Lander/Riverton area
@@ -219,7 +209,6 @@ plot(FremontMRoads, add = T, border = "grey")
 # Why do the roads and rivers still extend outside the study area polygon?
 ** ** 
 
-# Chloe
 ```{r - Cleaning up plots}
 # Lets make a cleaner version of the intersections between the study area and our water and roads
 FremontWater_sub <- crop(FremontWater, study_area)
@@ -236,7 +225,6 @@ plot(FremontMRoads_sub, add = T, border = "grey")
 # hint:look at road length.
 ** ** 
 
-# Sarah
 ```{r - Spatial maps in ggplot, message=F}
 
 # Have to fortify to plot with ggplot
@@ -269,7 +257,6 @@ ggplot() +
 
 # Processing of Spatial Data - Raster
 # Crop/Mask Raster Data and Spurge Points
-# Chloe
 ```{r - Raster crop ,message=F}
 
 # we are going to clip our rasters to match the clipped extent of our other data.
@@ -281,7 +268,6 @@ GAPCover_sub <- crop(GAPCover, study_area)
 #What do we need to look at in a Raster other than projection?
 ** **
 
-# Chloe
 ```{r - Rasters continued, message=F}
 
 res(Elevation)
@@ -310,7 +296,6 @@ dev.off()
 
 # Take a look at the raster data again, why do we have to mask it?
 ** **
-# Chloe
 ```{r - Plot Raster Data}
 par(mfrow = c(1, 2))
 plot(Elevation)
@@ -322,7 +307,6 @@ dev.off()
 ```
 
 # Read in Look Up Table of Sorts for GAPCover Data
-# Chloe
 ```{r - Raster Look Up Table for GAP, message = F}
 plot(GAPCover)
 # Where are these values in the legend coming from? And what do they mean?
@@ -338,7 +322,6 @@ GAP_LUT <- read.csv("GAP_LU.txt", header = TRUE, sep = ",", dec = ".")
 # Describe differences between the three CN_LEVELS 
 ** **
 
-# Sarah
 ```{r - Plot all data types together in ggplot, Elevation}
 #Lets start with plotting Elevation.
 
@@ -366,7 +349,6 @@ ggplot(df, aes(y=Latitude, x=Longitude)) +
 
 
 # How to best share maps with collaborators?
-# Nathan
 ```{r - Sharing Maps, message=F}
 
 share_map <- mapview(study_area, fill = FALSE, lwd = 2.2) + mapview(SpurgePoint_sub, map.types = mapviewGetOption("OpenStreetMap")) + mapview(Elevation_sub) + mapview(FremontMRoads_sub) + mapview(FremontCo, fill = FALSE) + mapview(FremontWater_sub)
@@ -383,7 +365,6 @@ share_map
 
 # Breakout room task  
 # Try making a map of slope that fits inside of all Fremont County. 
-# All
 ```{r - Lets try changing the extent to which our map is bound ,message=F}
 
 # Make a new map (any type) using a combination of the available layers for all of Fremont county AND use this new layer, slope_output.tif. 
