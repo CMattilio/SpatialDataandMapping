@@ -186,7 +186,7 @@ proj4string(GAPCover)
 ```
 
 #Plot time
-# Chloe
+# Sarah
 ```{r - Plotting, message=F}
 # Plot data sets to make sure they line up. May take a bit
 plot(SpurgePoint)
@@ -201,7 +201,7 @@ plot(FremontMRoads, add = T, border = "grey")
 ** ** 
 
 # Spatial Data Processing - Vector Data
-# Chloe
+# Sarah
 ```{r - Changing extent of map, message=F}
 
 # First lets clip the data to only look at Lander/Riverton area
@@ -219,7 +219,7 @@ plot(FremontMRoads, add = T, border = "grey")
 # Why do the roads and rivers still extend outside the study area polygon?
 ** ** 
 
-# Chloe
+# Sarah
 ```{r - Cleaning up plots}
 # Lets make a cleaner version of the intersections between the study area and our water and roads
 FremontWater_sub <- crop(FremontWater, study_area)
