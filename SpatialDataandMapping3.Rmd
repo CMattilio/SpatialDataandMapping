@@ -3,6 +3,8 @@ title: "SpatialData_and_Mapping"
 output:
   pdf_document: default
   html_document: default
+editor_options: 
+  chunk_output_type: console
 ---
 ---
 title: "SpatialData_and_Mapping"
@@ -35,24 +37,30 @@ Vector data consists of points, lines, and/or polygons with spatial coordinates
 ```{r - Load Vector Data, message=F}
 
 # Read in dataset of leafy spurge presence points in Fremont Co, WY
-SpurgeFull <- readOGR(dsn = ".", layer = "SpurgeFull")
+# SpurgeFull <- readOGR(dsn = ".", layer = "SpurgeFull")
+# Spurge as points, for real
+SpurgePoint <- readOGR(dsn = ".", layer = "SpurgePoint")
 study_area <- readOGR(dsn = ".", layer = "StudyArea")
 FremontMRoads <- readOGR(dsn = ".", layer = "FremontMainRoads")
 FremontWater <- readOGR(dsn = ".", layer = "WaterwaysFremont")
 FremontCo <- readOGR(dsn = ".", layer = "FremontCo")
 
 # Check to make sure data imported properly
-head(SpurgeFull)
+# head(SpurgeFull)
+head(SpurgePoint)
 head(study_area)
 head(FremontMRoads)
 head(FremontWater)
 head(FremontCo)
 
-table(is.na(SpurgeFull$Latitude))# must be FALSE here! No TRUES. 
-table(is.na(SpurgeFull$Longitude))# must be FALSE here! No TRUES. 
+# table(is.na(SpurgeFull$Latitude))# must be FALSE here! No TRUES. 
+# table(is.na(SpurgeFull$Longitude))# must be FALSE here! No TRUES. 
+table(is.na(SpurgePoint$Latitude))# must be FALSE here! No TRUES. 
+table(is.na(SpurgePoint$Longitude))# must be FALSE here! No TRUES. 
 
 # Plot data set. May take a bit
-plot(SpurgeFull)
+# plot(SpurgeFull)
+plot(SpurgePoint)
 
 # Not that informative, add some spatial context with Fremont Co border and a plot again
 ```
@@ -65,7 +73,8 @@ plot(SpurgeFull)
 
 ``` {r - Projection Systems}
 # First, check coordinate system and projection, otherwise these will not align when plotting
-proj4string(SpurgeFull)
+# proj4string(SpurgeFull)
+proj4string(SpurgePoint)
 proj4string(study_area)
 proj4string(FremontMRoads)
 proj4string(FremontWater)
@@ -93,14 +102,16 @@ dev.off()
 #Change the projection systems so that all data has the same CRS.
 ```{r - Correct projection, message=F}
 proj <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
-SpurgeFull <- spTransform(SpurgeFull, CRS(proj))
+# SpurgeFull <- spTransform(SpurgeFull, CRS(proj))
+SpurgePoint <- spTransform(SpurgePoint, CRS(proj))
 study_area <- spTransform(study_area, CRS(proj))
 FremontMRoads <- spTransform(FremontMRoads, CRS(proj))
 FremontWater <- spTransform(FremontWater, CRS(proj))
 FremontCo <- spTransform(FremontCo, CRS(proj))
 
 # make sure all projections line up
-proj4string(SpurgeFull)
+# proj4string(SpurgeFull)
+proj4string(SpurgePoint)
 proj4string(study_area)
 proj4string(FremontMRoads)
 proj4string(FremontWater)
@@ -119,7 +130,8 @@ proj4string(FremontCo)
 #Plot time
 ```{r - Plotting, message=F}
 # Plot data sets to make sure they line up. May take a bit
-plot(SpurgeFull)
+# plot(SpurgeFull)
+plot(SpurgePoint)
 plot(FremontCo, add = T, border = "red")
 plot(FremontWater, add = T, border = "blue")
 plot(FremontMRoads, add = T, border = "grey")
@@ -134,11 +146,13 @@ plot(FremontMRoads, add = T, border = "grey")
 
 # First lets clip the data to only look at Lander/Riverton area
 FremontMRoads <- FremontMRoads[study_area,]
-SpurgeFull <- SpurgeFull[study_area,]
+# SpurgeFull <- (SpurgeFull[study_area,])
+SpurgePoint <- SpurgePoint[study_area,]
 FremontWater <- FremontWater[study_area,]
 
 # Check to make sure it worked
-plot(SpurgeFull)
+# plot(SpurgeFull)
+plot(SpurgePoint)
 plot(study_area, add = T, border = "red")
 plot(FremontWater, add = T, border = "blue")
 plot(FremontMRoads, add = T, border = "grey")
@@ -152,7 +166,8 @@ plot(FremontMRoads, add = T, border = "grey")
 FremontWater_sub <- crop(FremontWater, study_area)
 FremontMRoads_sub <- crop(FremontMRoads, study_area)
 
-plot(SpurgeFull_sub)
+# plot(SpurgeFull_sub)
+plot(SpurgePoint)
 plot(study_area, add = T, border = "red")
 plot(FremontWater_sub, add = T, border = "blue")
 plot(FremontMRoads_sub, add = T, border = "grey")
@@ -166,7 +181,10 @@ plot(FremontMRoads_sub, add = T, border = "grey")
 
 # Have to fortify to plot with ggplot
 study_areaF <- fortify(study_area)
-SpurgeFullF <- fortify(SpurgeFull)
+# SpurgeFullF <- fortify(SpurgeFull)
+# Make SpurgePoints a dataframe
+SpurgePointdf <- as.data.frame(SpurgePoint)
+SpurgePointF <- fortify(SpurgePointdf)
 FremontWaterF <- fortify(FremontWater_sub)
 FremontCoF <- fortify(FremontCo)
 FremontMRoadsF <- fortify(FremontMRoads_sub)
@@ -174,7 +192,8 @@ FremontMRoadsF <- fortify(FremontMRoads_sub)
 # Plot spurge and Fremont country to continue to get oriented
 ggplot() +
   geom_polygon(data = FremontCoF, aes(x=long, y=lat), fill = NA, color = "black") +
-  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), fill = "NA", color ="green")+
+  # geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), fill = "NA", color ="green")+
+  geom_point(data = SpurgePointF, aes(x=Longitude, y=Latitude), fill = "NA", color = "green") +
   theme_minimal()+
   labs(x="",y="")+
   theme(panel.grid=element_blank(), axis.text=element_blank())
@@ -182,8 +201,9 @@ ggplot() +
 # Plot data sets with new clipped extent (just our study area)
 ggplot() +
   geom_polygon(data = study_areaF, aes(x=long, y=lat), fill = NA, color = "black") +
-  geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), fill = "blue", color = "blue" ) +    
-  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), fill = "yellow", color = "yellow" ) +    
+  geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), fill = "blue", color = "blue" ) + 
+  # geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), fill = "yellow", color = "yellow" ) +
+  geom_point(data = SpurgePointF, aes(x=Longitude, y=Latitude), fill = "yellow", color = "yellow" ) +
   geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black" ) +
   theme_minimal()+
   labs(x="", y="")+
@@ -198,23 +218,37 @@ ggplot() +
 # Import elevation
 Elevation <- raster("elev_output.tif")
 
+# Import slope
+# Slope <- raster("slope_output.tif")
+
 # Import GAP landcover data
 GAPCover <- raster("GAP_output.tif")
+
 # Alright, all data is in!
 
 # What to we need to do to make sure things will line up?
 proj4string(Elevation)
+# proj4string(Slope)
 proj4string(GAPCover)
+
 
 proj
 Elevation <- projectRaster(Elevation, crs = proj)
+# Slope <- projectRaster(Slope, crs = proj)
 GAPCover <- projectRaster(GAPCover, crs = proj)
 
 proj4string(Elevation)
+# proj4string(Slope)
 proj4string(GAPCover)
 # all looks great!
 
 ```
+
+```{r - Raster Look Up Table for GAP, message = F}
+read.delim(, header = TRUE, sep = "\t", dec = ".", ...)
+read.delim2(file, header = TRUE, sep = "\t", dec = ",", ...)
+```
+
 
 # Crop/Mask Raster Data
 ```{r - Raster crop ,message=F}
