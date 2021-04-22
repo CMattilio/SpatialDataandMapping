@@ -14,7 +14,7 @@ editor_options:
 ---
 
 ```{R - Install Packages, message=F}
-packages<-c("sf", "raster", "rgdal", "rgeos", "sp", "tidyverse", "rmarkdown","RColorBrewer", "mapview")
+packages<-c("sf", "raster", "rgdal", "rgeos", "sp", "tidyverse", "rmarkdown","RColorBrewer", "mapview", "readr")
 
 lapply(packages,FUN = function(x) {
   if (!require(x, character.only = TRUE)) {
@@ -244,19 +244,33 @@ proj4string(GAPCover)
 
 ```
 
+# Read in Look Up Table of Sorts for GAPCover Data
 ```{r - Raster Look Up Table for GAP, message = F}
-read.delim(, header = TRUE, sep = "\t", dec = ".", ...)
-read.delim2(file, header = TRUE, sep = "\t", dec = ",", ...)
+plot(GAPCover)
+# Where are these values in the legend coming from? And what do they mean?
+# Let's check it out by reading in a data table that corresponds to GAPCover values
+GAP_LUT <- read.csv("GAP_LU.txt", header = TRUE, sep = ",", dec = ".")
+# Explore this data table
+
 ```
 
+# What column(s) are we pulling values from when we plot GAPCover
+** **
 
-# Crop/Mask Raster Data
+# Describe differences between the three CN_LEVELS 
+** **
+
+# Crop/Mask Raster Data and Spurge Points
 ```{r - Raster crop ,message=F}
 
 # we are going to clip our rasters to match the clipped extent of our other data.
 # We have two rasters for you to play with, Elevation, and GAP Cover. 
 Elevation_sub <- crop(Elevation, study_area)
+# Slope_sub <- crop(Slope, study_area)
 GAPCover_sub <- crop(GAPCover, study_area)
+
+# IS THIS RIGHT? 
+SpurgePoint_sub <- crop(SpurgePoint, study_area)
 ```
 
 #What do we need to look at in a Raster other than projection?
@@ -265,6 +279,7 @@ GAPCover_sub <- crop(GAPCover, study_area)
 ```{r - Rasters continued, message=F}
 
 res(Elevation)
+# res(Slope)
 res(GAPCover)
 # Great! They match
 
@@ -298,7 +313,7 @@ plot(GAPCover)
 plot(GAPCover_sub)
 ```
 
-```{r - Plot all data types together in ggplot}
+```{r - Plot all data types together in ggplot, GAP}
 #Lets start with plotting GAPCover.
 
 #We  need to convert GAP landcover data from a raster to points to use in ggplot
@@ -318,14 +333,69 @@ ggplot(df, aes(y=Latitude, x=Longitude)) +
   scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
   geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "blue")+
   geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
-  geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
+  #geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
+  geom_point(data = SpurgePointF, aes(Longitude, y=Latitude, color = "chartreuse"))
+
+```
+
+```{r - Plot all data types together in ggplot, Elevation}
+#Lets start with plotting Elevation.
+
+#We  need to convert GAP landcover data from a raster to points to use in ggplot
+map.p <- rasterToPoints(Elevation_sub)
+df <- data.frame(map.p)
+
+#Make appropriate column headings
+colnames(df)<-c("Longitude", "Latitude", "Elevation")
+df<-fortify(df)
+
+#Elevation map - you'll have to give this a minute or two to plot!
+ggplot(df, aes(y=Latitude, x=Longitude)) +
+  geom_raster(aes(fill=Elevation))+
+  theme_minimal()+
+  theme(panel.grid = element_blank(), axis.text = element_blank())+
+  labs(x="", y="")+
+  scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
+  geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "blue")+
+  geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
+  #geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
+  geom_point(data = SpurgePointF, aes(Longitude, y=Latitude, color = "chartreuse"))
+
+```
+
+
+```{r - Plot all data types together in ggplot, Slope}
+#Lets start with plotting Elevation.
+
+#We  need to convert GAP landcover data from a raster to points to use in ggplot
+map.p <- rasterToPoints(Elevation_sub)
+df <- data.frame(map.p)
+
+#Make appropriate column headings
+colnames(df)<-c("Longitude", "Latitude", "Elevation")
+df<-fortify(df)
+
+#Elevation map - you'll have to give this a minute or two to plot!
+ggplot(df, aes(y=Latitude, x=Longitude)) +
+  geom_raster(aes(fill=Elevation))+
+  theme_minimal()+
+  theme(panel.grid = element_blank(), axis.text = element_blank())+
+  labs(x="", y="")+
+  scale_fill_gradientn(colours=brewer.pal(9, "RdPu"))+
+  geom_polygon(data = FremontWaterF, aes(x=long, y=lat, group = group), color = "blue")+
+  geom_line(data = FremontMRoadsF, aes(x=long, y=lat, group = group), color = "black")+
+  #geom_polygon(data = SpurgeFullF, aes(x=long, y=lat, group = group), color ="chartreuse")
+  geom_point(data = SpurgePointF, aes(Longitude, y=Latitude, color = "chartreuse"))
 
 ```
 
 # How to best share maps with colaborators?
 ```{r - Sharing Maps, message=F}
 
-share_map <- mapview(study_area, fill = FALSE, lwd = 2.2) + mapview(SpurgeFull_sub, map.types = mapviewGetOption("OpenStreetMap")) + mapview(Elevation_sub) + mapview(FremontMRoads_sub) + mapview(FremontCo, fill = FALSE) + mapview(FremontWater_sub)
+# share_map <- mapview(study_area, fill = FALSE, lwd = 2.2) + mapview(SpurgeFull_sub, map.types = mapviewGetOption("OpenStreetMap")) + mapview(Elevation_sub) + mapview(FremontMRoads_sub) + mapview(FremontCo, fill = FALSE) + mapview(FremontWater_sub)
+# share_map
+
+share_map <- mapview(study_area, fill = FALSE, lwd = 2.2) + mapview(SpurgePoint_sub, map.types = mapviewGetOption("OpenStreetMap")) + mapview(Elevation_sub) + mapview(FremontMRoads_sub) + mapview(FremontCo, fill = FALSE) + mapview(FremontWater_sub)
 share_map
 
 ####  To make a HTML map to share
@@ -354,7 +424,8 @@ rm(list = ls())
 #Re-read in your spatial data
 GAPCover <- raster("GAP_output.tif")
 Elevation <- raster("elev_output.tif")
-SpurgeFull <- readOGR(dsn = ".", layer = "SpurgeFull")
+# SpurgeFull <- readOGR(dsn = ".", layer = "SpurgeFull")
+SpurgePoints <- readOGR(dsn = ".", layer = "SpurgePoints")
 FremontMRoads <- readOGR(dsn = ".", layer = "FremontMainRoads")
 FremontWater <- readOGR(dsn = ".", layer = "WaterwaysFremont")
 FremontCo <- readOGR(dsn = ".", layer = "FremontCo")
