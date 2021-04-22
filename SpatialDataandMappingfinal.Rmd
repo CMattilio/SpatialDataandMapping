@@ -24,29 +24,18 @@ editor_options:
 #install.packages("RColorBrewer")
 #install.packages("mapview")
 #install.packages("readr")
-#library(sf)
-#library(raster)
-#library(rgdal)
-#library(rgeos)
-#library(sp)
-#library(tidyverse)
-#library(rmarkdown)
-#library(RColorBrewer)
-#library(mapview)
-#library(readr)
 
-packages<-c("sf", "raster", "rgdal", "rgeos", "sp", "tidyverse", "rmarkdown","RColorBrewer", "mapview", "readr")
+library(sf)
+library(raster)
+library(rgdal)
+library(rgeos)
+library(sp)
+library(tidyverse)
+library(rmarkdown)
+library(RColorBrewer)
+library(mapview)
+library(readr)
 
-lapply(packages,FUN = function(x) {
-  if (!require(x, character.only = TRUE)) {
-    install.packages(x, dependencies = TRUE)
-    library(x, character.only = TRUE)}})
-
-# clean environment
-rm(packages)
-
-# If you have plotting settings, remove them with the below code
-# dev.off()
 ```
 
 # Working off of Local desktop GIS workspace using Github repository
@@ -60,7 +49,7 @@ Vector data consists of points, lines, and/or polygons with spatial coordinates
 # Load Vector Data
 ```{r - Load Vector Data, message=F}
 
-# Read in dataset of leafy spurge presence points in Fremont Co, WY
+# Read in data set of leafy spurge presence points in Fremont Co, WY
 SpurgePoint <- readOGR(dsn = ".", layer = "SpurgePoint")
 
 # Polygon data, polygons, polylines, etc.
@@ -80,7 +69,7 @@ table(is.na(SpurgePoint$Latitude))# must be FALSE here! No TRUES.
 table(is.na(SpurgePoint$Longitude))# must be FALSE here! No TRUES. 
 
 # Plot data set. May take a bit
-plot(SpurgePoint)
+plot(SpurgePoint, pch=21)
 
 # Not that informative as a standalone map, we will add some spatial context after we read in the next data
 ```
@@ -88,7 +77,7 @@ plot(SpurgePoint)
 # Now, read in raster data...
 # Raster data is made up of a grid of pixels filled with values. These can be continuous variables like elevation, thematic values like landcover, or reflectance values like remote sensing imagery. 
 ```{r - Load raster data}
-# For this project, we have one continuous topographic raster and one thematic landcover raster.
+# For this project, we have one continuous topographic raster and one thematic land cover raster.
 
 # Import elevation
 Elevation <- raster("elev_output.tif")
@@ -180,8 +169,8 @@ proj4string(GAPCover)
 
 ```{r - Plotting, message=F}
 # Plot data sets to make sure they line up. May take a bit
-plot(SpurgePoint)
-plot(FremontCo, add = T, border = "red")
+plot(FremontCo, border = "red")
+plot(SpurgePoint, pch=20,add = T, col="yellowgreen")
 plot(FremontWater, add = T, border = "blue")
 plot(FremontMRoads, add = T, border = "grey")
 
@@ -200,8 +189,8 @@ SpurgePoint <- SpurgePoint[study_area,]
 FremontWater <- FremontWater[study_area,]
 
 # Check to make sure it worked
-plot(SpurgePoint)
-plot(study_area, add = T, border = "red")
+plot(study_area, border = "red")
+plot(SpurgePoint, pch=20,add = T, col="yellowgreen")
 plot(FremontWater, add = T, border = "blue")
 plot(FremontMRoads, add = T, border = "grey")
 ```
@@ -215,8 +204,8 @@ FremontWater_sub <- crop(FremontWater, study_area)
 FremontMRoads_sub <- crop(FremontMRoads, study_area)
 SpurgePoint_sub <- crop(SpurgePoint, study_area)
 
-plot(SpurgePoint_sub)
-plot(study_area, add = T, border = "red")
+plot(study_area, border = "red")
+plot(SpurgePoint_sub, pch=20,add = T, col="yellowgreen")
 plot(FremontWater_sub, add = T, border = "blue")
 plot(FremontMRoads_sub, add = T, border = "grey")
 ```
