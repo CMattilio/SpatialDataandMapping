@@ -350,8 +350,6 @@ Slope <- raster("slope_output.tif")
 
 # Detail the steps you need to take in order to make this map and code it out. Try to decrease the cell size to make a smoother looking map with any raster layers.
 
-rm(list = ls())
-
 #Re-read in your spatial data, if you need to.
 GAPCover <- raster("GAP_output.tif")
 Elevation <- raster("elev_output.tif")
@@ -360,19 +358,19 @@ FremontMRoads <- readOGR(dsn = ".", layer = "FremontMainRoads")
 FremontWater <- readOGR(dsn = ".", layer = "WaterwaysFremont")
 FremontCo <- readOGR(dsn = ".", layer = "FremontCo")
 
-  # First, mask it to Fremont Co:
+# First, mask it to Fremont Co:
  
 Slope <-mask(Slope,FremontCo)
   
 
-  # Next, you will need to convert the raster to points - try it!
+# Next, you will need to convert the raster to points - try it!
 map.p <- rasterToPoints(Slope)
-  slope.df <- data.frame(map.p)
-  colnames(slope.df)<-c("Longitude", "Latitude", "slope")  #and make appropriate column headings
-  slopedf<-fortify(slope.df)
+slope.df <- data.frame(map.p)
+colnames(slope.df)<-c("Longitude", "Latitude", "slope")  #and make appropriate column headings
+slopedf<-fortify(slope.df)
 
-  # Last, plot it all with ggplot. (You can use the Elevation code for reference!)
-  ggplot(slope.df, aes(y=Latitude, x=Longitude)) +
+# Last, plot it all with ggplot. (You can use the Elevation code for reference!)
+  ggplot(slopedf, aes(y=Latitude, x=Longitude)) +
     geom_raster(aes(fill=slope))+
     geom_polygon(data=FremontCoF, aes(x=long, y=lat),color = "black", fill="NA", size=1)+
     theme_minimal()+
