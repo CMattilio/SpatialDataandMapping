@@ -245,7 +245,7 @@ Elevation_sub <- crop(Elevation, study_area)
 GAPCover_sub <- crop(GAPCover, study_area)
 ```
 
-#What do we need to look at in a raster other than projection?
+# Now, we need to add in our rasters. But first, what do we need to look at in a raster other than projection?
 ** **
 
 ```{r - Rasters continued, message=F}
