@@ -93,7 +93,7 @@ GAPCover <- raster("GAP_output.tif")
 
 ``` {r - Projection Systems, message=F}
 # First, check coordinate system and projection, otherwise these will not align when plotting.
-proj4string(SpurgeFull)
+proj4string(SpurgePoint)
 proj4string(study_area)
 proj4string(FremontMRoads)
 proj4string(FremontWater)
@@ -123,7 +123,7 @@ dev.off()
 # Change the projection sysmtes so that all data has the same CRS.
 ```{r - Projection, message=F}
 proj <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
-SpurgeFull <- spTransform(SpurgeFull, CRS(proj))
+SpurgePoint <- spTransform(SpurgePoint, CRS(proj))
 study_area <- spTransform(study_area, CRS(proj))
 FremontMRoads <- spTransform(FremontMRoads, CRS(proj))
 FremontWater <- spTransform(FremontWater, CRS(proj))
@@ -132,7 +132,7 @@ Elevation <- projectRaster(Elevation, crs = proj)
 GAPCover <- projectRaster(GAPCover, crs = proj)
 
 # Make sure all projections line up.
-proj4string(SpurgeFull)
+proj4string(SpurgePoint)
 proj4string(study_area)
 proj4string(FremontMRoads)
 proj4string(FremontWater)
@@ -146,20 +146,20 @@ proj4string(GAPCover)
 **You can use identical(crs()) to look at two objects, or identicalCRS() to check if the projection system between two objects are the same.**
 ``` {r - Projections, message=F}
 # Try some new ways here!
-identical(crs(SpurgeFull),crs(study_area))
-identicalCRS(SpurgeFull,study_area)
+identical(crs(SpurgePoint),crs(study_area))
+identicalCRS(SpurgePoint,study_area)
 ```
 
 # Plot time!
 We'll get oriented by plotting in base R first.
 ```{r - Plotting, message=F}
-# Plot datasets to make sure they line up. (May take a bit)
-plot(SpurgeFull)
-plot(FremontCo, add = T, border = "red")
+# Plot data sets to make sure they line up. (May take a bit)
+plot(FremontCo, border = "red")
+plot(SpurgePoint, pch=20,add = T, col="yellowgreen")
 plot(FremontWater, add = T, border = "blue")
 plot(FremontMRoads, add = T, border = "grey")
 
-# You might notice some issues! 
+# You might notice some issues!
 ```
 
 # What is wrong with the map right now?
@@ -169,12 +169,12 @@ plot(FremontMRoads, add = T, border = "grey")
 
 # First lets clip the data to only look at Lander/Riverton area
 FremontMRoads <- FremontMRoads[study_area,]
-SpurgeFull <- SpurgeFull[study_area,]
+SpurgePoint <- SpurgePoint[study_area,]
 FremontWater <- FremontWater[study_area,]
 
-# Check to make sure it worked
-plot(SpurgeFull)
-plot(study_area, add = T, border = "red")
+# Check to make sure it worked.
+plot(study_area, border = "red")
+plot(SpurgePoint, pch=20,add = T, col="yellowgreen")
 plot(FremontWater, add = T, border = "blue")
 plot(FremontMRoads, add = T, border = "grey")
 ```
@@ -325,25 +325,17 @@ ggplot(df, aes(y=Latitude, x=Longitude)) +
 ```
 
 
-# How to best share maps with colaborators?
+# How to best share maps with collaborators?
 ```{r - Sharing Maps, message=F}
 
-share_map <- mapview(study_area, fill = FALSE, lwd = 2.2) + mapview(SpurgeFull_sub, map.types = mapviewGetOption("OpenStreetMap")) + mapview(Elevation_sub) + mapview(FremontMRoads_sub) + mapview(FremontCo, fill = FALSE) + mapview(FremontWater_sub)
+share_map <- mapview(study_area, fill = FALSE, lwd = 2.2) + mapview(SpurgePoint_sub, map.types = mapviewGetOption("OpenStreetMap")) + mapview(Elevation_sub) + mapview(FremontMRoads_sub) + mapview(FremontCo, fill = FALSE) + mapview(FremontWater_sub)
 share_map
 
 ####  To make a HTML map to share
 #### DO NOT RUN THIS CODE CHUNK #### It will take a long time. It is only an example to work off.
 
-# setwd() # make this to a folder shared with collaborators like google drive or Box
-# mapshot(share_map,  url = paste0(getwd(), "/Fremont_County_Spurge.html")) #change map iteration each time unless you want to overwrite. Can provide a good history of maps with changing data
-
-```
-
-# Breakout room task 1
-```{r}
-# Make a new map (any type) using a combination of the available layers for all of Fremont county AND use this new layer. Detail the steps you need to take in order to make this map and code it out. Try to decrease the cell size to make a smoother looking map with any raster layers.
-
-FremontAgencies <- readOGR(dsn = ".", layer = "FremontAgencies")
+# setwd() # Make this to a folder shared with collaborators like Google Drive or Box.
+# mapshot(share_map,  url = paste0(getwd(), "/Fremont_County_Spurge.html")) # Change map iteration each time unless you want to overwrite. Can provide a good history of maps with changing data.
 
 ```
 
