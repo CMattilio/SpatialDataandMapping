@@ -98,6 +98,8 @@ proj4string(study_area)
 proj4string(FremontMRoads)
 proj4string(FremontWater)
 proj4string(FremontCo)
+proj4string(Elevation)
+proj4string(GAPCover)
 ```
 
 # What happens if your projection systems don't match? How do the two plots below differ?
@@ -126,6 +128,8 @@ study_area <- spTransform(study_area, CRS(proj))
 FremontMRoads <- spTransform(FremontMRoads, CRS(proj))
 FremontWater <- spTransform(FremontWater, CRS(proj))
 FremontCo <- spTransform(FremontCo, CRS(proj))
+Elevation <- projectRaster(Elevation, crs = proj)
+GAPCover <- projectRaster(GAPCover, crs = proj)
 
 # Make sure all projections line up.
 proj4string(SpurgePoint)
@@ -133,22 +137,9 @@ proj4string(study_area)
 proj4string(FremontMRoads)
 proj4string(FremontWater)
 proj4string(FremontCo)
+proj4string(Elevation)
+proj4string(GAPCover)
 # Perfect!
-```
-
-# Now, do the same projection changes for the raster data (Elevation and GAPCover).
-```{r - Raster Projections}
-# What to we need to do to make sure things will line up?
-proj4string(Elevation)
-proj4string(GAPCover)
-
-proj
-Elevation <- projectRaster(Elevation, crs = proj)
-GAPCover <- projectRaster(GAPCover, crs = proj)
-
-proj4string(Elevation)
-proj4string(GAPCover)
-# All looks great!
 ```
 
 
